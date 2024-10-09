@@ -1,7 +1,7 @@
 #![no_main]
 sp1_zkvm::entrypoint!(main);
 
-use std::io::{self, Write};
+// use std::io::{self, Write};
 
 #[derive(Clone, Copy, PartialEq)]
 enum Tile {
@@ -179,8 +179,8 @@ fn decode_moves(bytes32: &str) -> Vec<Direction> {
 
 fn main() {
     println!("Enter the bytes32 solution (with or without 0x prefix):");
-    let mut input = String::new();
-    io::stdin().read_line(&mut input).unwrap();
+    let input = sp1_zkvm::io::read::<String>();
+
     let input = input.trim();
 
     let moves = decode_moves(input);
@@ -188,12 +188,12 @@ fn main() {
     println!("Moves sequence: {:?}", moves);
 
     let mut game = Game::new();
-    let mut step = 0;
+    //let mut step = 0;
     
     println!("\nInitial state:");
     game.print();
     println!("\nPress Enter to start simulation...");
-    io::stdin().read_line(&mut String::new()).unwrap();
+    //io::stdin().read_line(&mut String::new()).unwrap();
 
     for (i, &direction) in moves.iter().enumerate() {
         print!("\x1B[2J\x1B[1;1H"); // Clear screen
