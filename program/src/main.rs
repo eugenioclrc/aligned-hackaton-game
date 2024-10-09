@@ -180,6 +180,10 @@ fn decode_moves(bytes32: &str) -> Vec<Direction> {
 fn main() {
     println!("Enter the bytes32 solution (with or without 0x prefix):");
     let input = sp1_zkvm::io::read::<String>();
+    let total_moves = sp1_zkvm::io::read::<String>();
+
+    // totalMoves number string to usize
+    let total_moves = total_moves.parse::<usize>().unwrap();
 
     let input = input.trim();
 
@@ -190,31 +194,35 @@ fn main() {
     let mut game = Game::new();
     //let mut step = 0;
     
-    println!("\nInitial state:");
-    game.print();
-    println!("\nPress Enter to start simulation...");
+    //println!("\nInitial state:");
+    //game.print();
+    //println!("\nPress Enter to start simulation...");
     //io::stdin().read_line(&mut String::new()).unwrap();
 
-    for (i, &direction) in moves.iter().enumerate() {
-        print!("\x1B[2J\x1B[1;1H"); // Clear screen
-        println!("Executing move {} of {}: {:?}", i + 1, moves.len(), direction);
+    for (_i, &direction) in moves.iter().enumerate() {
+        //print!("\x1B[2J\x1B[1;1H"); // Clear screen
+        //println!("Executing move {} of {}: {:?}", i + 1, moves.len(), direction);
         
         if game.move_player(direction) {
             game.print();
         } else {
-            println!("Invalid move!");
+            //println!("Invalid move!");
         }
 
         if game.is_won() {
-            println!("\nSolution found in {} moves!", game.moves);
+            //println!("\nSolution found in {} moves!", game.moves);
             break;
         }
 
         // Pequeña pausa entre movimientos
-        std::thread::sleep(std::time::Duration::from_millis(500));
+        //std::thread::sleep(std::time::Duration::from_millis(500));
     }
 
     if !game.is_won() {
-        println!("\nSolution did not solve the puzzle!");
+        panic!("Solution did not solve the puzzle!");
+        //println!("\nSolution did not solve the puzzle!");
+    }
+    if game.moves != total_moves {
+        panic!("Solution has more moves than expected!");
     }
 }
