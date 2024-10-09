@@ -58,25 +58,6 @@ impl Game {
         }
     }
 
-    fn print(&self) {
-        for row in &self.map {
-            for tile in row {
-                let symbol = match tile {
-                    Tile::Empty => ' ',
-                    Tile::Wall => '#',
-                    Tile::Player => '@',
-                    Tile::Box => '$',
-                    Tile::Target => '.',
-                    Tile::BoxOnTarget => '*',
-                    Tile::PlayerOnTarget => '+',
-                };
-                print!("{}", symbol);
-            }
-            println!();
-        }
-        println!("Moves: {}", self.moves);
-    }
-
     fn is_won(&self) -> bool {
         for row in &self.map {
             for tile in row {
@@ -178,7 +159,7 @@ fn decode_moves(bytes32: &str) -> Vec<Direction> {
 }
 
 fn main() {
-    println!("Enter the bytes32 solution (with or without 0x prefix):");
+    //println!("Enter the bytes32 solution (with or without 0x prefix):");
     let input = sp1_zkvm::io::read::<String>();
     let total_moves = sp1_zkvm::io::read::<String>();
 
@@ -188,11 +169,10 @@ fn main() {
     let input = input.trim();
 
     let moves = decode_moves(input);
-    println!("Decoded {} moves", moves.len());
-    println!("Moves sequence: {:?}", moves);
+    //println!("Decoded {} moves", moves.len());
+    //println!("Moves sequence: {:?}", moves);
 
     let mut game = Game::new();
-    //let mut step = 0;
     
     //println!("\nInitial state:");
     //game.print();
@@ -203,18 +183,12 @@ fn main() {
         //print!("\x1B[2J\x1B[1;1H"); // Clear screen
         //println!("Executing move {} of {}: {:?}", i + 1, moves.len(), direction);
         
-        if game.move_player(direction) {
-            game.print();
-        } else {
-            //println!("Invalid move!");
-        }
-
-        if game.is_won() {
-            //println!("\nSolution found in {} moves!", game.moves);
+        if !game.move_player(direction) || game.is_won() {
             break;
         }
 
-        // Pequeña pausa entre movimientos
+
+        // pausa entre movimientos
         //std::thread::sleep(std::time::Duration::from_millis(500));
     }
 
