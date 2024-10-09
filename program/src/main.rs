@@ -1,3 +1,6 @@
+#![no_main]
+sp1_zkvm::entrypoint!(main);
+
 use std::io::{self, Write};
 
 #[derive(Clone, Copy, PartialEq)]
