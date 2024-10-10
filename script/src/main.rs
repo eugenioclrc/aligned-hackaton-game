@@ -1,10 +1,11 @@
 use std::io::{self, Write};
 use serde::{Deserialize, Serialize};
 use serde_json::Result;
+use hex;
 
 #[derive(Serialize, Deserialize)]
 struct FinalData {
-    path: [u8; 32],
+    path: String,
     length: u8,
 }
 
@@ -245,7 +246,7 @@ fn main() {
 
         let (path, length) = encoder.get_data();
         let data = FinalData {
-            path,
+            path: format!("0x{}", hex::encode(path)),
             length,
         };
 

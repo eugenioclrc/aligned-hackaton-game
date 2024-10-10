@@ -1,7 +1,13 @@
 #![no_main]
 sp1_zkvm::entrypoint!(main);
 
-// use std::io::{self, Write};
+use serde::{Deserialize, Serialize};
+
+#[derive(Serialize, Deserialize)]
+struct FinalData {
+    path: String,
+    length: u8,
+}
 
 #[derive(Clone, Copy, PartialEq)]
 enum Tile {
@@ -37,7 +43,7 @@ impl Direction {
 struct Game {
     map: Vec<Vec<Tile>>,
     player_pos: (usize, usize),
-    moves: usize,
+    moves: u8,
 }
 
 impl Game {
@@ -159,12 +165,15 @@ fn decode_moves(bytes32: &str) -> Vec<Direction> {
 }
 
 fn main() {
-    //println!("Enter the bytes32 solution (with or without 0x prefix):");
-    let input = sp1_zkvm::io::read::<String>();
-    let total_moves = sp1_zkvm::io::read::<String>();
+    
+    let zkinput = sp1_zkvm::io::read::<String>();
+
+    let deserialized: FinalData = serde_json::from_str(&zkinput).unwrap();
+
+    let input = deserialized.path;
+    let total_moves = deserialized.length;
 
     // totalMoves number string to usize
-    let total_moves = total_moves.parse::<usize>().unwrap();
 
     let input = input.trim();
 
@@ -197,6 +206,6 @@ fn main() {
         //println!("\nSolution did not solve the puzzle!");
     }
     if game.moves != total_moves {
-        panic!("Solution has more moves than expected!");
+        panic!("Solution has different moves than expected!");
     }
 }

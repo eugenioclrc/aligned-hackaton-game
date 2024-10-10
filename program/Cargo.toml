@@ -5,3 +5,6 @@ edition = "2021"
 
 [dependencies]
 sp1-zkvm = "2.0.0"
+
+serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
+serde = { version = "1.0", default-features = false, features = ["derive"] }
