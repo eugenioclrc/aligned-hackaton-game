@@ -1,4 +1,14 @@
 use std::io::{self, Write};
+use serde::{Deserialize, Serialize};
+use serde_json::Result;
+
+#[derive(Serialize, Deserialize)]
+struct FinalData {
+    path: [u8; 32],
+    length: u8,
+}
+
+
 
 #[derive(Clone, Copy, PartialEq)]
 enum Tile {
@@ -46,6 +56,17 @@ impl DirectionEncoder {
             current_bit: 0,
         }
     }
+
+    // Add a method to get the current data and length
+    fn get_data(&self) -> (([u8; 32]), u8) {
+        let length = if self.current_bit == 0 {
+            (self.current_byte * 4) as u8
+        } else {
+            (self.current_byte * 4 + (self.current_bit / 2)) as u8
+        };
+        (self.data, length)
+    }
+    
 
     fn add_direction(&mut self, direction: Direction) -> bool {
         if self.current_byte >= 32 {
@@ -221,6 +242,16 @@ fn main() {
     
     loop {
         print!("\x1B[2J\x1B[1;1H"); // Clear screen
+
+        let (path, length) = encoder.get_data();
+        let data = FinalData {
+            path,
+            length,
+        };
+
+        let serialized = serde_json::to_string(&data).unwrap();
+        println!("{}", serialized);
+
         game.print();
         
         if game.is_won() {
