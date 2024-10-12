@@ -4,7 +4,6 @@ use sp1_sdk::{ProverClient, SP1Stdin};
 
 use serde::{Deserialize, Serialize};
 use serde_json::Result;
-use hex;
 
 #[derive(Serialize, Deserialize)]
 struct FinalData {
