@@ -1,0 +1,15 @@
+[profile.default]
+solc_version = '0.8.27'
+src = "src"
+out = "out"
+libs = ["lib"]
+optimizer = false
+optimizer_runs = 5000
+evm_version="cancun"
+
+[dependencies]
+forge-std = { version = "1.9.3", url = "https://soldeer-revisions.s3.amazonaws.com/forge-std/1_9_3_30-09-2024_08:27:09_forge-std-1.9.zip" }
+solady = { version = "latest", git = "https://github.com/Vectorized/solady.git", rev = "2b58ba62398cf36545efaf6ead9ba72c8f115ff5" }
+
+
+# See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options

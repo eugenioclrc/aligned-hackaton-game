@@ -1,0 +1,6 @@
+[submodule "leaderboard-contract/lib/forge-std"]
+	path = leaderboard-contract/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "leaderboard-contract/lib/solady"]
+	path = leaderboard-contract/lib/solady
+	url = https://github.com/vectorized/solady

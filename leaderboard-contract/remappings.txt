@@ -1,0 +1,2 @@
+forge-std-1.9.3/=dependencies/forge-std-1.9.3/
+solady-latest/=dependencies/solady-latest/

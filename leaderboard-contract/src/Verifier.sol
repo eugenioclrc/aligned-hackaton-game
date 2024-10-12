@@ -1,0 +1,83 @@
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.27;
+
+import {LeaderBoard} from "./LeaderBoard.sol";
+
+contract Verifier {
+    LeaderBoard immutable public leaderboard = new LeaderBoard();
+
+    address immutable public alignedServiceManager;
+    address immutable public paymentServiceAddr;
+
+    // @todo how do i generate the commitment???
+    bytes32 immutable public elfCommitment = 0x3f99615fdf3b67a01e41b38eee75a32c778ee2fa631bd74e01c89afc2f70f5de;
+        
+    error InvalidElf(bytes32 submittedElf); // c6d95066
+
+    // map to check if proof has already been submitted
+    mapping(bytes32 => bool) public mintedProofs;
+
+    constructor(
+        address _alignedServiceManager,
+        address _paymentServiceAddr
+    ) {
+        alignedServiceManager = _alignedServiceManager;
+        paymentServiceAddr = _paymentServiceAddr;
+    }
+
+    function verifyBatchInclusion(
+        bytes32 proofCommitment,
+        bytes32 pubInputCommitment,
+        bytes32 provingSystemAuxDataCommitment,
+        bytes20 proofGeneratorAddr,
+        bytes32 batchMerkleRoot,
+        bytes memory merkleProof,
+        uint256 verificationDataBatchIndex
+    ) external returns (uint256) {
+        if (elfCommitment != provingSystemAuxDataCommitment) {
+            revert InvalidElf(provingSystemAuxDataCommitment);
+        }
+        require(
+            address(proofGeneratorAddr) == msg.sender,
+            "proofGeneratorAddr does not match"
+        );
+
+        bytes32 fullHash = keccak256(
+            abi.encodePacked(
+                proofCommitment,
+                pubInputCommitment,
+                provingSystemAuxDataCommitment,
+                proofGeneratorAddr
+            )
+        );
+        require(!mintedProofs[fullHash], "proof already minted");
+
+        (
+            bool callWasSuccessfull,
+            bytes memory proofIsIncluded
+        ) = alignedServiceManager.staticcall(
+                abi.encodeWithSignature(
+                    "verifyBatchInclusion(bytes32,bytes32,bytes32,bytes20,bytes32,bytes,uint256,address)",
+                    proofCommitment,
+                    pubInputCommitment,
+                    provingSystemAuxDataCommitment,
+                    proofGeneratorAddr,
+                    batchMerkleRoot,
+                    merkleProof,
+                    verificationDataBatchIndex,
+                    paymentServiceAddr
+                )
+            );
+
+        require(callWasSuccessfull, "static_call failed");
+
+        bool proofIsIncludedBool = abi.decode(proofIsIncluded, (bool));
+        require(proofIsIncludedBool, "proof not included in batch");
+
+        mintedProofs[fullHash] = true;
+
+        // @todo add score
+        leaderboard.mint(msg.sender);
+    }
+
+}
