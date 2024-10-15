@@ -6,6 +6,8 @@ use base64::{Engine as _, engine::general_purpose};
 use std::fs::File;
 use std::io::Write;
 
+use bincode;
+
 #[derive(Serialize, Deserialize)]
 struct FinalData {
     path: String,
@@ -100,10 +102,12 @@ fn main() -> std::io::Result<()> {
 
         // Get the raw bytes of the proof
         //let proof_bytes = proof.bytes();
+        let proof = bincode::serialize(&proof).expect("Failed to serialize proof");
+
 
         // Save proof to file in raw byte format
         let mut file = File::create("proof.bin")?;
-        file.write_all(&proof.bytes())?;
+        file.write_all(&proof)?;
 
    
         println!("Proof saved to proof.bin");
