@@ -1,6 +1,6 @@
 use std::io::{self, Write};
 use serde::{Deserialize, Serialize};
-//use serde_json::Result;
+use serde_json::Result;
 use hex;
 
 #[derive(Serialize, Deserialize)]
