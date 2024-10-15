@@ -10,7 +10,7 @@ all: build-elf build-prover build-game
 
 build-elf:
 	@echo "Building ELF files"
-	cd $(PROG_DIR) && cargo prove build
+	cd $(PROG_DIR) && cargo prove build && aligned get-vk-commitment --verification_key_file  elf/riscv32im-succinct-zkvm-elf  --proving_system SP1 2> elf/commitment
 
 build-prover:
 	@echo "Building PROVER files"
