@@ -32,5 +32,21 @@ This will build the run the game using your path to prove the game and build the
 ```
 
 ## Submit prove
-....
-.... TODO?
+Use
+
+```bash
+rm -rf ./aligned_verification_data/ &&
+aligned submit \
+    --proving_system SP1 \
+    --proof prove/proof.bin \
+    --vm_program program/elf/riscv32im-succinct-zkvm-elf \
+    --aligned_verification_data_path ./aligned_verification_data \
+    --batcher_url wss://batcher.alignedlayer.com \
+    --network holesky \
+    --rpc_url https://ethereum-holesky-rpc.publicnode.com
+
+2024-10-15T19:10:11Z WARN  aligned] Missing keystore used for payment. This proof will not be included if sent to Eth Mainnet
+[2024-10-15T19:10:13Z INFO  aligned] Submitting proofs to the Aligned batcher...
+[2024-10-15T19:10:17Z ERROR aligned_sdk::communication::messaging] Invalid Proof!
+[2024-10-15T19:10:17Z ERROR aligned] Submitted proof is invalid
+```
