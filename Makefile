@@ -20,7 +20,7 @@ build-game:
 	@echo "Building end user GAME"
 	cd $(GAME_DIR) && cargo build --release
 
-build-prove:
+proof:
 	@echo "Building PROVE files"
 	cd $(PROVE_DIR) && ./target/release/sokoban --prove --moves '{"path":"0x08943fd894f5a000000000000000000000000000000000000000000000000000","length":26}'
 

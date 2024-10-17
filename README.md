@@ -43,6 +43,7 @@ aligned submit \
     --aligned_verification_data_path ./aligned_verification_data \
     --batcher_url wss://batcher.alignedlayer.com \
     --network holesky \
+    --keystore_path ~/.foundry/keystores/keystore0 \
     --rpc_url https://ethereum-holesky-rpc.publicnode.com
 
 2024-10-15T19:10:11Z WARN  aligned] Missing keystore used for payment. This proof will not be included if sent to Eth Mainnet

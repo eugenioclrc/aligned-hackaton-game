@@ -67,6 +67,7 @@ fn main() -> std::io::Result<()> {
         let (pk, vk) = client.setup(SOKOBAN_ELF);
 
         // Generate the proof
+        
         let proof = client
             .prove(&pk, stdin)
             .run()
