@@ -22,7 +22,7 @@ build-game:
 
 proof:
 	@echo "Building PROVE files"
-	cd $(PROVE_DIR) && ./target/release/sokoban --prove --moves '{"path":"0x08943fd894f5a000000000000000000000000000000000000000000000000000","length":26}'
+	cd $(PROVE_DIR) && ./target/release/sokoban --prove --moves '{"path":"0x08943fd894f5a000000000000000000000000000000000000000000000000000","length":26,"map":"todo"}'
 
 clean:
 	@echo "Cleaning all builds"
