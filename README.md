@@ -42,7 +42,7 @@ Use
 rm -rf ./aligned_verification_data/ &&
 aligned submit \
     --proving_system SP1 \
-    --proof prove/proof.bin \
+    --proof proof.bin \
     --vm_program program/elf/riscv32im-succinct-zkvm-elf \
     --aligned_verification_data_path ./aligned_verification_data \
     --batcher_url wss://batcher.alignedlayer.com \
