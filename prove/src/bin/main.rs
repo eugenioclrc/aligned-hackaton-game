@@ -1,7 +1,6 @@
 use clap::Parser;
 use sp1_sdk::{ProverClient, SP1Stdin};
 use serde::{Deserialize, Serialize};
-use serde_json::Result as JsonResult;
 use base64::{Engine as _, engine::general_purpose};
 use std::fs::File;
 use std::io::Write;
@@ -39,7 +38,7 @@ fn save_to_file(filename: &str, content: &str) -> std::io::Result<()> {
 
 fn main() -> std::io::Result<()> {
     // Setup the logger.
-    sp1_sdk::utils::setup_logger();
+    // sp1_sdk::utils::setup_logger();
 
     // Parse the command line arguments.
     let args = Args::parse();
@@ -49,18 +48,19 @@ fn main() -> std::io::Result<()> {
         std::process::exit(1);
     }
 
-    // Setup the prover client.
-    let client = ProverClient::new();
-
-    // Setup the inputs.
-    let mut stdin = SP1Stdin::new();
-    // moves is the serde output
-    stdin.write(&args.moves);
 
     let deserialized: FinalData = serde_json::from_str(&args.moves).unwrap();
 
     println!("path: {}", deserialized.path);
     println!("length: {}", deserialized.length);
+
+
+    // Setup the inputs.
+    let mut stdin = SP1Stdin::new();
+    // moves is the serde output
+    stdin.write(&args.moves);
+    // Setup the prover client.
+    let client = ProverClient::new();
 
     if args.prove {
         // Setup the program for proving.
@@ -84,22 +84,22 @@ fn main() -> std::io::Result<()> {
         let proof_serialized = serde_json::to_string(&proof).expect("Failed to serialize proof");
 
         // Encode the serialized data
-        let vk_encoded = general_purpose::STANDARD.encode(&vk_serialized);
-        let proof_encoded = general_purpose::STANDARD.encode(&proof_serialized);
+        //let vk_encoded = general_purpose::STANDARD.encode(&vk_serialized);
+        ///let proof_encoded = general_purpose::STANDARD.encode(&proof_serialized);
 
         // Save verification key to file
-        save_to_file("verification_key.txt", &vk_encoded)?;
-        println!("Verification key saved to verification_key.txt");
+        //save_to_file("verification_key.txt", &vk_encoded)?;
+        //println!("Verification key saved to verification_key.txt");
 
         // Save proof to file
-        save_to_file("proof.txt", &proof_encoded)?;
-        println!("Proof saved to proof.txt");
+        //save_to_file("proof.txt", &proof_encoded)?;
+        //println!("Proof saved to proof.txt");
 
         // Output the proof and verification key in a format suitable for further processing
-        let output = serde_json::json!({
-            "vk": vk_encoded,
-            "proof": proof_encoded,
-        });
+        //let output = serde_json::json!({
+        //    "vk": vk_encoded,
+        //    "proof": proof_encoded,
+        //});
 
         // Get the raw bytes of the proof
         //let proof_bytes = proof.bytes();

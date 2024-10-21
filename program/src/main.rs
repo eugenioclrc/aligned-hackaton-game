@@ -1,6 +1,10 @@
-#![no_main]
-sp1_zkvm::entrypoint!(main);
+//! A simple program to be proven inside the zkVM.
+//! Consists in a 5 question multiple choice quiz
+//! with 3 possible answers each.
 
+#![no_main]
+
+sp1_zkvm::entrypoint!(main);
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
