@@ -11,6 +11,8 @@ use serde::{Deserialize, Serialize};
 struct FinalData {
     path: String,
     length: u8,
+    // set the user map as public input
+    pub map: String,
 }
 
 #[derive(Clone, Copy, PartialEq)]
@@ -176,6 +178,9 @@ fn main() {
 
     let input = deserialized.path;
     let total_moves = deserialized.length;
+
+    // commit the score
+    sp1_zkvm::io::commit::<u8>(&total_moves);
 
     // totalMoves number string to usize
 
