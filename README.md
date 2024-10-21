@@ -22,7 +22,11 @@ To run the game you can use the following command:
 
 After you win the game you will see get a valid path to prove the game.
 ```json
-{"path":"0x0894cfd894f5a000000000000000000000000000000000000000000000000000","length":26}
+{
+    "path":"0x0894cfd894f5a000000000000000000000000000000000000000000000000000",
+    "length":26,
+    "map":"todo"
+}
 ```
 
 ## Prove the game
