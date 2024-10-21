@@ -32,7 +32,8 @@ contract Verifier {
         bytes20 proofGeneratorAddr,
         bytes32 batchMerkleRoot,
         bytes memory merkleProof,
-        uint256 verificationDataBatchIndex
+        uint256 verificationDataBatchIndex,
+        bytes memory pubInputBytes
     ) external returns (uint256) {
         if (elfCommitment != provingSystemAuxDataCommitment) {
             revert InvalidElf(provingSystemAuxDataCommitment);
