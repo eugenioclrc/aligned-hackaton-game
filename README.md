@@ -46,8 +46,9 @@ aligned submit \
     --keystore_path ~/.foundry/keystores/keystore0 \
     --rpc_url https://ethereum-holesky-rpc.publicnode.com
 
-2024-10-15T19:10:11Z WARN  aligned] Missing keystore used for payment. This proof will not be included if sent to Eth Mainnet
-[2024-10-15T19:10:13Z INFO  aligned] Submitting proofs to the Aligned batcher...
-[2024-10-15T19:10:17Z ERROR aligned_sdk::communication::messaging] Invalid Proof!
-[2024-10-15T19:10:17Z ERROR aligned] Submitted proof is invalid
+Please enter your keystore password:
+[2024-10-21T20:01:09Z INFO  aligned] Submitting proofs to the Aligned batcher...
+[2024-10-21T20:01:43Z INFO  aligned] Batch inclusion data written into ./aligned_verification_data/b194298f_0.json
+[2024-10-21T20:01:43Z INFO  aligned] Proofs submitted to aligned. See the batch in the explorer:
+[2024-10-21T20:01:43Z INFO  aligned] https://explorer.alignedlayer.com/batches/0xb194298fab098c1f3eef571cdc76e99974e668b7cf823562740bb1a5b3bf6e1e
 ```
