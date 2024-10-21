@@ -59,7 +59,7 @@ impl DirectionEncoder {
     }
 
     // Add a method to get the current data and length
-    fn get_data(&self) -> (([u8; 32]), u8) {
+    fn get_data(&self) -> ([u8; 32], u8) {
         let length = if self.current_bit == 0 {
             (self.current_byte * 4) as u8
         } else {
