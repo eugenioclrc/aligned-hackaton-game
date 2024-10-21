@@ -467,15 +467,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "quiz-program"
-version = "0.1.0"
-dependencies = [
- "serde",
- "serde_json",
- "sp1-zkvm",
-]
-
-[[package]]
 name = "quote"
 version = "1.0.37"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -635,6 +626,15 @@ checksum = "460a9ed63cdf03c1b9847e8a12a5f5ba19c4efd5869e4a737e05be25d7c427e5"
 dependencies = [
  "parity-scale-codec",
  "scale-info",
+]
+
+[[package]]
+name = "sokoban-program"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "sp1-zkvm",
 ]
 
 [[package]]

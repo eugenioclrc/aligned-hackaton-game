@@ -1,7 +1,6 @@
 use clap::Parser;
 use sp1_sdk::{ProverClient, SP1Stdin};
 use serde::{Deserialize, Serialize};
-use base64::{Engine as _, engine::general_purpose};
 use std::fs::File;
 use std::io::Write;
 
@@ -30,11 +29,6 @@ struct Args {
     moves: String,
 }
 
-fn save_to_file(filename: &str, content: &str) -> std::io::Result<()> {
-    let mut file = File::create(filename)?;
-    file.write_all(content.as_bytes())?;
-    Ok(())
-}
 
 fn main() -> std::io::Result<()> {
     // Setup the logger.
@@ -61,7 +55,7 @@ fn main() -> std::io::Result<()> {
     stdin.write(&args.moves);
     // Setup the prover client.
     let client = ProverClient::new();
-
+    
     if args.prove {
         // Setup the program for proving.
         let (pk, vk) = client.setup(SOKOBAN_ELF);
