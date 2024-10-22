@@ -27,6 +27,12 @@ struct FinalData {
     pub map: String,
 }
 
+#[derive(Serialize, Deserialize)]
+struct PubInput {
+    pub map: String,
+    pub length: u8,
+}
+
 /// The ELF (executable and linkable format) file for the Succinct RISC-V zkVM.
 pub const SOKOBAN_ELF: &[u8] = include_bytes!("../../../program/elf/riscv32im-succinct-zkvm-elf");
 
@@ -137,6 +143,13 @@ async fn main() {
 
     println!("Payment successful. Submitting proof...");
 
+    let pub_input_struct = PubInput {
+        map: deserialized.map,
+        length: deserialized.length,
+    };
+    let pub_input = bincode::serialize(&pub_input_struct)
+        .expect("Failed to serialize public input")
+        .to_vec();
 
     let verification_data = VerificationData {
         proving_system: ProvingSystemId::SP1,
@@ -144,10 +157,10 @@ async fn main() {
         proof_generator_addr: wallet.address(),
         vm_program_code: Some(SOKOBAN_ELF.to_vec()),
         verification_key: None,
-        pub_input: None,
+        pub_input: Some(pub_input.clone()),
     };
 
-    let max_fee = estimate_fee(&rpc_url, PriceEstimate::Instant)
+    let max_fee = estimate_fee(&rpc_url, PriceEstimate::Default)
         .await
         .expect("failed to fetch gas price from the blockchain");
     
@@ -187,6 +200,7 @@ async fn main() {
         &aligned_verification_data,
         signer,
         &args.verifier_contract_address,
+        &pub_input.clone()
     )
     .await
     .expect("Claiming of NFT failed ...");
@@ -196,6 +210,7 @@ async fn claim_nft_with_verified_proof(
     aligned_verification_data: &AlignedVerificationData,
     signer: SignerMiddleware<Provider<Http>, LocalWallet>,
     verifier_contract_addr: &Address,
+    pub_input: &[u8],
 ) -> anyhow::Result<()> {
     let verifier_contract = VerifierContract::new(*verifier_contract_addr, signer.into());
 
@@ -228,7 +243,7 @@ async fn claim_nft_with_verified_proof(
             aligned_verification_data.batch_merkle_root,
             merkle_path,
             index_in_batch,
-            Bytes::from(Vec::new()),
+            Bytes::from(pub_input.to_vec()),
         )
         .send()
         .await
