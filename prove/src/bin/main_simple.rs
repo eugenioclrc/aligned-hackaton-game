@@ -1,6 +1,6 @@
 use clap::Parser;
-use sp1_sdk::{ProverClient, SP1Stdin};
 use serde::{Deserialize, Serialize};
+use sp1_sdk::{ProverClient, SP1Stdin};
 use std::fs::File;
 use std::io::Write;
 
@@ -29,7 +29,6 @@ struct Args {
     moves: String,
 }
 
-
 fn main() -> std::io::Result<()> {
     // Setup the logger.
     // sp1_sdk::utils::setup_logger();
@@ -42,12 +41,10 @@ fn main() -> std::io::Result<()> {
         std::process::exit(1);
     }
 
-
     let deserialized: FinalData = serde_json::from_str(&args.moves).unwrap();
 
     println!("path: {}", deserialized.path);
     println!("length: {}", deserialized.length);
-
 
     // Setup the inputs.
     let mut stdin = SP1Stdin::new();
@@ -55,13 +52,13 @@ fn main() -> std::io::Result<()> {
     stdin.write(&args.moves);
     // Setup the prover client.
     let client = ProverClient::new();
-    
+
     if args.prove {
         // Setup the program for proving.
         let (pk, vk) = client.setup(SOKOBAN_ELF);
 
         // Generate the proof
-        
+
         let proof = client
             .prove(&pk, stdin)
             .run()
@@ -74,13 +71,13 @@ fn main() -> std::io::Result<()> {
         println!("Successfully verified proof!");
 
         // Serialize the verification key and proof
-        let vk_serialized = serde_json::to_string(&vk).expect("Failed to serialize verification key");
+        let vk_serialized =
+            serde_json::to_string(&vk).expect("Failed to serialize verification key");
         let proof_serialized = serde_json::to_string(&proof).expect("Failed to serialize proof");
 
         // Encode the serialized data
         //let vk_encoded = general_purpose::STANDARD.encode(&vk_serialized);
         ///let proof_encoded = general_purpose::STANDARD.encode(&proof_serialized);
-
         // Save verification key to file
         //save_to_file("verification_key.txt", &vk_encoded)?;
         //println!("Verification key saved to verification_key.txt");
@@ -99,12 +96,10 @@ fn main() -> std::io::Result<()> {
         //let proof_bytes = proof.bytes();
         let proof = bincode::serialize(&proof).expect("Failed to serialize proof");
 
-
         // Save proof to file in raw byte format
         let mut file = File::create("proof.bin")?;
         file.write_all(&proof)?;
 
-   
         println!("Proof saved to proof.bin");
 
         //println!("Proof Output:");

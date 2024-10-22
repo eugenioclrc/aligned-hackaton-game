@@ -1,13 +1,10 @@
 use clap::Parser;
-use sp1_sdk::{ProverClient, SP1Stdin};
 use serde::{Deserialize, Serialize};
+use sp1_sdk::{ProverClient, SP1Stdin};
 //use std::fs::File;
 //use std::io::Write;
-use std::fs::File;
-use ethers::types::Bytes;
 
-
-#![feature(slice_flatten)]
+//#![feature(slice_flatten)]
 use std::io;
 
 use aligned_sdk::core::types::{
@@ -49,7 +46,6 @@ struct Args {
 
     //#[clap(long)]
     //prove: bool,
-
     #[clap(long)]
     moves: String,
 
@@ -68,7 +64,6 @@ struct Args {
     #[arg(short, long)]
     verifier_contract_address: H160,
 }
-
 
 #[tokio::main]
 async fn main() {
@@ -106,7 +101,6 @@ async fn main() {
         .expect("Failed to pay for proof submission");
     }
 
-
     let deserialized: FinalData = serde_json::from_str(&args.moves).unwrap();
 
     println!("path: {}", deserialized.path);
@@ -117,7 +111,9 @@ async fn main() {
         length: deserialized.length,
     };
 
-    let pub_input = bincode::serialize(&pub_input_struct).expect("Failed to serialize public input").to_vec();
+    let pub_input = bincode::serialize(&pub_input_struct)
+        .expect("Failed to serialize public input")
+        .to_vec();
 
     // Setup the inputs.
     let mut stdin = SP1Stdin::new();
@@ -130,12 +126,11 @@ async fn main() {
     let (pk, vk) = client.setup(SOKOBAN_ELF);
 
     // Generate the proof
-    
+
     let proof = client
         .prove(&pk, stdin)
         .run()
         .expect("failed to generate proof");
-
 
     let Ok(proof) = client.prove(&pk, stdin).run() else {
         println!("Incorrect path moves!");
@@ -145,10 +140,9 @@ async fn main() {
     // Serialize proof into bincode (format used by sp1)
     let proof = bincode::serialize(&proof).expect("Failed to serialize proof");
 
-
     // Save proof to file in raw byte format
-    let file = File::create("proof.bin");
-    file.expect("REASON").write_all(&proof);
+    //let file = File::create("proof.bin");
+    //file.expect("REASON").write_all(&proof);
 
     let verification_data = VerificationData {
         proving_system: ProvingSystemId::SP1,
@@ -156,18 +150,8 @@ async fn main() {
         proof_generator_addr: wallet.address(),
         vm_program_code: Some(SOKOBAN_ELF.to_vec()),
         verification_key: None,
-        pub_input: None,
+        pub_input: Bytes::from(pub_input),
     };
-    let verification_data = VerificationData {
-        proving_system: ProvingSystemId::SP1,
-        proof,
-        proof_generator_addr: wallet.address(),
-        vm_program_code: Some(SOKOBAN_ELF.to_vec()),
-        verification_key: None,
-        pub_input: None,
-    };
-
-
 
     let max_fee = estimate_fee(&rpc_url, PriceEstimate::Instant)
         .await
@@ -185,7 +169,7 @@ async fn main() {
         .await
         .expect("Failed to get next nonce");
 
-        println!("Submitting your proof...");
+    println!("Submitting your proof...");
 
     let aligned_verification_data = submit_and_wait_verification(
         &args.batcher_url,
@@ -209,18 +193,17 @@ async fn main() {
         &aligned_verification_data,
         signer,
         &args.verifier_contract_address,
-        &pub_input,
+        Bytes::from(&pub_input),
     )
     .await
     .expect("Claiming of NFT failed ...");
 }
 
-
 async fn claim_nft_with_verified_proof(
     aligned_verification_data: &AlignedVerificationData,
     signer: SignerMiddleware<Provider<Http>, LocalWallet>,
     verifier_contract_addr: &Address,
-    public_input: &[u8],
+    public_input: Bytes,
 ) -> anyhow::Result<()> {
     let verifier_contract = VerifierContract::new(*verifier_contract_addr, signer.into());
 
@@ -232,6 +215,15 @@ async fn claim_nft_with_verified_proof(
             .as_slice()
             .flatten()
             .to_vec(),
+    );
+
+    let merkle_path = Bytes::from(
+        aligned_verification_data
+            .batch_inclusion_proof
+            .merkle_path
+            .into_iter()
+            .flatten()
+            .collect::<Vec<_>>(),
     );
 
     let receipt = verifier_contract
@@ -251,8 +243,7 @@ async fn claim_nft_with_verified_proof(
             aligned_verification_data.batch_merkle_root,
             merkle_path,
             index_in_batch,
-            Bytes::from(public_input)
-
+            public_input,
         )
         .send()
         .await
