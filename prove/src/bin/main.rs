@@ -3,11 +3,12 @@ use sp1_sdk::{ProverClient, SP1Stdin};
 use serde::{Deserialize, Serialize};
 //use std::fs::File;
 //use std::io::Write;
-use zerocopy::AsBytes;
-    
+use std::fs::File;
+use ethers::types::Bytes;
 
-//#![feature(slice_flatten)]
-//use std::io;
+
+#![feature(slice_flatten)]
+use std::io;
 
 use aligned_sdk::core::types::{
     AlignedVerificationData, Network, PriceEstimate, ProvingSystemId, VerificationData,
@@ -250,7 +251,8 @@ async fn claim_nft_with_verified_proof(
             aligned_verification_data.batch_merkle_root,
             merkle_path,
             index_in_batch,
-            public_input.bytes(),
+            Bytes::from(public_input)
+
         )
         .send()
         .await
