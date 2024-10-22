@@ -10,7 +10,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Serialize, Deserialize)]
 struct FinalData {
     path: String,
-    length: u8,
+    pub length: u8,
     // set the user map as public input
     pub map: String,
 }
@@ -181,6 +181,7 @@ fn main() {
 
     // commit the score
     sp1_zkvm::io::commit::<u8>(&total_moves);
+    sp1_zkvm::io::commit::<String>(&deserialized.map); // should i also commit the map?
 
     // totalMoves number string to usize
 
