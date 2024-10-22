@@ -67,9 +67,6 @@ fn main() {
     //io::stdin().read_line(&mut String::new()).unwrap();
 
     for (_i, &direction) in moves.iter().enumerate() {
-        //print!("\x1B[2J\x1B[1;1H"); // Clear screen
-        //println!("Executing move {} of {}: {:?}", i + 1, moves.len(), direction);
-        
         if !game.move_player(direction) || game.is_won() {
             break;
         }
