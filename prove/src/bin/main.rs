@@ -1,10 +1,3 @@
-use clap::Parser;
-use serde::{Deserialize, Serialize};
-use sp1_sdk::{ProverClient, SP1Stdin};
-//use std::fs::File;
-//use std::io::Write;
-
-//#![feature(slice_flatten)]
 use std::io;
 
 use aligned_sdk::core::types::{
@@ -12,26 +5,26 @@ use aligned_sdk::core::types::{
 };
 use aligned_sdk::sdk::{deposit_to_aligned, estimate_fee};
 use aligned_sdk::sdk::{get_next_nonce, submit_and_wait_verification};
+use clap::Parser;
 use dialoguer::Confirm;
 use ethers::prelude::*;
 use ethers::providers::{Http, Provider};
 use ethers::signers::{LocalWallet, Signer};
 use ethers::types::{Address, Bytes, H160, U256};
+use sp1_sdk::{ProverClient, SP1Stdin};
 
 abigen!(VerifierContract, "VerifierContract.json",);
 
-use bincode;
+
+use serde::{Deserialize, Serialize};
+
+
 
 #[derive(Serialize, Deserialize)]
 struct FinalData {
     path: String,
-    length: u8,
-}
-
-#[derive(Serialize, Deserialize)]
-struct PublicInputStruct {
-    pub map: String,
     pub length: u8,
+    pub map: String,
 }
 
 /// The ELF (executable and linkable format) file for the Succinct RISC-V zkVM.
@@ -41,11 +34,6 @@ pub const SOKOBAN_ELF: &[u8] = include_bytes!("../../../program/elf/riscv32im-su
 #[derive(Parser, Debug)]
 #[clap(author, version, about, long_about = None)]
 struct Args {
-    //#[clap(long)]
-    //execute: bool,
-
-    //#[clap(long)]
-    //prove: bool,
     #[clap(long)]
     moves: String,
 
@@ -61,7 +49,7 @@ struct Args {
     batcher_url: String,
     #[arg(short, long, default_value = "holesky")]
     network: Network,
-    #[arg(short, long)]
+    #[arg(short, long, default_value = "0x2A7187502059feA9f55F5b1656f5Ac2875721608")]
     verifier_contract_address: H160,
 }
 
@@ -72,6 +60,21 @@ async fn main() {
 
     // Parse the command line arguments.
     let args = Args::parse();
+
+    let deserialized: FinalData = serde_json::from_str(&args.moves).unwrap();
+
+    println!("path: {}", deserialized.path);
+    println!("length: {}", deserialized.length);
+    println!("map: {}", deserialized.map);
+
+    // Setup the inputs.
+    let mut stdin = SP1Stdin::new();
+    // moves is the serde output
+    stdin.write(&args.moves);
+    // Setup the prover client.
+    let client = ProverClient::new();
+    // Setup the program for proving.
+    let (pk, vk) = client.setup(SOKOBAN_ELF);
 
     let rpc_url = args.rpc_url.clone();
 
@@ -101,29 +104,7 @@ async fn main() {
         .expect("Failed to pay for proof submission");
     }
 
-    let deserialized: FinalData = serde_json::from_str(&args.moves).unwrap();
-
-    println!("path: {}", deserialized.path);
-    println!("length: {}", deserialized.length);
-
-    let pub_input_struct = PublicInputStruct {
-        map: deserialized.path,
-        length: deserialized.length,
-    };
-
-    let pub_input = bincode::serialize(&pub_input_struct)
-        .expect("Failed to serialize public input")
-        .to_vec();
-
-    // Setup the inputs.
-    let mut stdin = SP1Stdin::new();
-    // moves is the serde output
-    stdin.write(&args.moves);
-    // Setup the prover client.
-    let client = ProverClient::new();
-
-    // Setup the program for proving.
-    let (pk, vk) = client.setup(SOKOBAN_ELF);
+   
 
     // Generate the proof
 
@@ -132,17 +113,30 @@ async fn main() {
         .run()
         .expect("failed to generate proof");
 
-    let Ok(proof) = client.prove(&pk, stdin).run() else {
-        println!("Incorrect path moves!");
-        return;
-    };
+    println!("Successfully generated proof!");
+
+    // Verify the proof.
+    client.verify(&proof, &vk).expect("failed to verify proof");
+    println!("Successfully verified proof!");
+
+
+    println!("Generating Proof ");
+
+    let client = ProverClient::new();
+    let (pk, vk) = client.setup(SOKOBAN_ELF);
+
+    
+    println!("Proof generated successfully. Verifying proof...");
+    client.verify(&proof, &vk).expect("verification failed");
+    println!("Proof verified successfully.");
+
+    println!("Payment successful. Submitting proof...");
 
     // Serialize proof into bincode (format used by sp1)
     let proof = bincode::serialize(&proof).expect("Failed to serialize proof");
 
-    // Save proof to file in raw byte format
-    //let file = File::create("proof.bin");
-    //file.expect("REASON").write_all(&proof);
+    println!("Payment successful. Submitting proof...");
+
 
     let verification_data = VerificationData {
         proving_system: ProvingSystemId::SP1,
@@ -150,13 +144,13 @@ async fn main() {
         proof_generator_addr: wallet.address(),
         vm_program_code: Some(SOKOBAN_ELF.to_vec()),
         verification_key: None,
-        pub_input: Bytes::from(pub_input),
+        pub_input: None,
     };
 
     let max_fee = estimate_fee(&rpc_url, PriceEstimate::Instant)
         .await
         .expect("failed to fetch gas price from the blockchain");
-
+    
     let max_fee_string = ethers::utils::format_units(max_fee, 18).unwrap();
 
     if !Confirm::with_theme(&dialoguer::theme::ColorfulTheme::default())
@@ -169,7 +163,7 @@ async fn main() {
         .await
         .expect("Failed to get next nonce");
 
-    println!("Submitting your proof...");
+        println!("Submitting your proof...");
 
     let aligned_verification_data = submit_and_wait_verification(
         &args.batcher_url,
@@ -193,7 +187,6 @@ async fn main() {
         &aligned_verification_data,
         signer,
         &args.verifier_contract_address,
-        Bytes::from(&pub_input),
     )
     .await
     .expect("Claiming of NFT failed ...");
@@ -203,7 +196,6 @@ async fn claim_nft_with_verified_proof(
     aligned_verification_data: &AlignedVerificationData,
     signer: SignerMiddleware<Provider<Http>, LocalWallet>,
     verifier_contract_addr: &Address,
-    public_input: Bytes,
 ) -> anyhow::Result<()> {
     let verifier_contract = VerifierContract::new(*verifier_contract_addr, signer.into());
 
@@ -213,17 +205,10 @@ async fn claim_nft_with_verified_proof(
             .batch_inclusion_proof
             .merkle_path
             .as_slice()
-            .flatten()
-            .to_vec(),
-    );
-
-    let merkle_path = Bytes::from(
-        aligned_verification_data
-            .batch_inclusion_proof
-            .merkle_path
-            .into_iter()
-            .flatten()
-            .collect::<Vec<_>>(),
+            .into_iter()  // Convert the slice reference into an iterator
+            .flatten()    // Now flatten the iterator
+            .copied()     // Copy the elements because we are working with references
+            .collect::<Vec<u8>>(),
     );
 
     let receipt = verifier_contract
@@ -243,7 +228,7 @@ async fn claim_nft_with_verified_proof(
             aligned_verification_data.batch_merkle_root,
             merkle_path,
             index_in_batch,
-            public_input,
+            Bytes::from(Vec::new()),
         )
         .send()
         .await
