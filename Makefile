@@ -22,7 +22,7 @@ build-game:
 
 proof:
 	@echo "Building PROVE files"
-	cd $(PROVE_DIR) && ./target/release/sokoban --prove --moves '{"path":"0x08943fd894f5a000000000000000000000000000000000000000000000000000","length":26,"map":"todo"}'
+	cd $(PROVE_DIR) && ./target/release/sokoban --moves '{"path":"0x08943fd894f5a000000000000000000000000000000000000000000000000000","length":26,"map":"todo"}' --keystore-path ~/.foundry/keystores/keystore0
 
 clean:
 	@echo "Cleaning all builds"
