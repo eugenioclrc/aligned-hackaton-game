@@ -1,6 +1,6 @@
 import { Scene } from 'phaser';
 
-const gameData = {"row":6,"cols":7,"map":"aaaa002844a222bc0aaaa0","playerRow":2,"playerCol":1}
+//const gameData = {"row":6,"cols":7,"map":"aaaa002844a222bc0aaaa0","playerRow":2,"playerCol":1}
 
 import { Tile, Level } from '../lib/lib.js';
 
@@ -21,6 +21,7 @@ export class Game extends Scene
     }
 
     create () {
+        const gameData = window.globalLevelData;
         this.playableMap = (new Level(gameData)).toTileArray();
         let _map = this.playableMap;
 
@@ -28,12 +29,7 @@ export class Game extends Scene
 
         //this.add.image(512, 384, 'background').setAlpha(0.5);
 
-        this.add.text(512, 384, 'Make something fun!\nand share it with us:\nsupport@phaser.io', {
-            fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
-            stroke: '#000000', strokeThickness: 8,
-            align: 'center'
-        }).setOrigin(0.5);
-
+    
         // Creating a blank tilemap with the specified dimensions
         this.map = this.make.tilemap({ tileWidth: 128, tileHeight: 128, width: _map[0].length, height: _map.length  });
         const tiles = this.map.addTilesetImage('tiles');
@@ -146,13 +142,32 @@ export class Game extends Scene
                 this.undoMovement();
             });
 
+            this.text = this.add.text(32, this.cameras.main.height - 240).setScrollFactor(0).setFontSize(32).setColor('#ffffff');
+
+
     }
 
     update () {
-        if (this.isMoving) { // Only allow movement when not moving
-            return;
-        }
 
+
+        var cam = this.cameras.main;
+            this.text.setText([
+                'Commands:',
+                '- Use arrows or WASD to move',
+                '- R to restart',
+                '- BACKSPACE to undo',
+                'Total moves: ' + String(this.movements.length - 1),
+                'Encode movements (hex): 0x' + directionsToHex(this.movements.filter(e => e.direction).map(e => e.direction)),
+                'Encode movements (bit): ' + directionsToBit(this.movements.filter(e => e.direction).map(e => e.direction)),
+                
+                //'deadzone left: ' + cam.deadzone.left,
+                //'deadzone right: ' + cam.deadzone.right,
+                //'deadzone top: ' + cam.deadzone.top,
+                //'deadzone bottom: ' + cam.deadzone.bottom
+            ]);
+            if (this.isMoving) { // Only allow movement when not moving
+                return;
+            }
         // Player movement handling
         if (this.cursors.left.isDown || this.cursors.A.isDown) {
             this.movePlayer('left');
@@ -301,21 +316,20 @@ export class Game extends Scene
     }
 }
 
-function directionsToHex(directions) {
+function directionsToBit(directions) {
     const directionMap = {
         'up': '00',
         'left': '10',
         'down': '01',
         'right': '11'
     };
-    debugger;
 
-        let bitString = directions.map(direction => directionMap[direction]).join('');
-        
-        // Convertir la cadena de bits a un número hexadecimal
-        let hexResult = parseInt(bitString, 2).toString(16).toUpperCase();
-        
-    
-    console.log(hexResult);  
-    return hexResult;
-    }
+    let bitString = directions.map(direction => directionMap[direction]).join('');
+    return bitString;
+}
+
+function directionsToHex(directions) {
+    let bitString = directionsToBit(directions);
+    if(bitString == '') return '0';
+    return parseInt(bitString, 2).toString(16).toUpperCase();
+}
