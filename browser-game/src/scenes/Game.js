@@ -72,15 +72,64 @@ export class Game extends Scene
 
         // Player animation
         this.anims.create({
-            key: 'idle',
+            key: 'idle-down',
             frames: this.anims.generateFrameNumbers('player', { start: 52, end: 52 }),
+            frameRate: 10,
+            repeat: -1
+        });
+        // Player animation
+        this.anims.create({
+            key: 'down',
+            frames: this.anims.generateFrameNumbers('player', { start: 52, end: 54 }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'idle-up',
+            frames: this.anims.generateFrameNumbers('player', { start: 55, end: 55 }),
+            frameRate: 10,
+            repeat: -1
+        });
+        // Player animation
+        this.anims.create({
+            key: 'up',
+            frames: this.anims.generateFrameNumbers('player', { start: 55, end: 57 }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'idle-left',
+            frames: this.anims.generateFrameNumbers('player', { start: 81, end: 81 }),
+            frameRate: 10,
+            repeat: -1
+        });
+        // Player animation
+        this.anims.create({
+            key: 'left',
+            frames: this.anims.generateFrameNumbers('player', { start: 81, end: 83 }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'idle-right',
+            frames: this.anims.generateFrameNumbers('player', { start: 78, end: 78 }),
+            frameRate: 10,
+            repeat: -1
+        });
+        // Player animation
+        this.anims.create({
+            key: 'right',
+            frames: this.anims.generateFrameNumbers('player', { start: 78, end: 80 }),
             frameRate: 10,
             repeat: -1
         });
 
         // Adding the player sprite at the initial position from gameData
         this.player = this.add.sprite(gameData.playerCol * 64 + 32, gameData.playerRow * 64 + 32, 'player').setScale(0.5);
-        this.player.play('idle');
+        this.player.play('idle-down');
 
 
         // Position tracking
@@ -266,6 +315,7 @@ export class Game extends Scene
 
 
             this.isMoving = true; // Disable input during movement
+            this.player.play(dir);
 
             // Update player's internal position
             this.playerRow = newRow;
@@ -279,6 +329,7 @@ export class Game extends Scene
                 duration: 300, // Animation duration in ms
                 onComplete: () => {
                     this.isMoving = false; // Re-enable input when animation ends
+                    this.player.play('idle-'+this.player.anims.currentAnim.key);
                     this.checkWin();
                 }
             });
