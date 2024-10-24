@@ -4136,28 +4136,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "prove"
-version = "0.1.0"
-dependencies = [
- "aligned-sdk",
- "anyhow",
- "base64 0.22.1",
- "bincode",
- "clap",
- "dialoguer",
- "ethers 2.0.14 (git+https://github.com/yetanotherco/ethers-rs.git?tag=v2.0.15-fix-reconnections)",
- "hex",
- "log",
- "rpassword",
- "serde",
- "serde_json",
- "sp1-helper",
- "sp1-sdk",
- "tokio",
- "tracing",
-]
-
-[[package]]
 name = "psm"
 version = "0.1.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5194,6 +5172,28 @@ checksum = "ce305eb0b4296696835b71df73eb912e0f1ffd2556a501fcede6e0c50349191c"
 dependencies = [
  "libc",
  "windows-sys 0.52.0",
+]
+
+[[package]]
+name = "sokoban"
+version = "0.1.0"
+dependencies = [
+ "aligned-sdk",
+ "anyhow",
+ "base64 0.22.1",
+ "bincode",
+ "clap",
+ "dialoguer",
+ "ethers 2.0.14 (git+https://github.com/yetanotherco/ethers-rs.git?tag=v2.0.15-fix-reconnections)",
+ "hex",
+ "log",
+ "rpassword",
+ "serde",
+ "serde_json",
+ "sp1-helper",
+ "sp1-sdk",
+ "tokio",
+ "tracing",
 ]
 
 [[package]]

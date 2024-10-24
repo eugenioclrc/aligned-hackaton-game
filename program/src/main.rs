@@ -1,6 +1,5 @@
 //! A simple program to be proven inside the zkVM.
-//! Consists in a 5 question multiple choice quiz
-//! with 3 possible answers each.
+//! Consists in a classic puzzle, the sokoban game.
 
 #![no_main]
 

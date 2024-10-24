@@ -19,22 +19,29 @@ abigen!(VerifierContract, "VerifierContract.json",);
 use serde::{Deserialize, Serialize};
 
 
-
 #[derive(Serialize, Deserialize)]
 struct FinalData {
     path: String,
-    pub length: u8,
-    pub map: String,
+    length: u128, // length is the amount of moves to solve the puzzle
+    row: u32,
+    cols: u32,
+    player_col: u32,
+    player_row: u32,
+    map: String,
 }
 
 #[derive(Serialize, Deserialize)]
 struct PubInput {
-    pub map: String,
-    pub length: u8,
+    length: u128, // length is the amount of moves to solve the puzzle
+    row: u32,
+    cols:u32,
+    player_col: u32,
+    player_row: u32,
+    map: String,
 }
 
 /// The ELF (executable and linkable format) file for the Succinct RISC-V zkVM.
-pub const SOKOBAN_ELF: &[u8] = include_bytes!("../../../program/elf/riscv32im-succinct-zkvm-elf");
+pub const SOKOBAN_ELF: &[u8] = include_bytes!("../../program/elf/riscv32im-succinct-zkvm-elf");
 
 /// The arguments for the command.
 #[derive(Parser, Debug)]
@@ -72,6 +79,7 @@ async fn main() {
     println!("path: {}", deserialized.path);
     println!("length: {}", deserialized.length);
     println!("map: {}", deserialized.map);
+  
 
     // Setup the inputs.
     let mut stdin = SP1Stdin::new();
@@ -144,8 +152,12 @@ async fn main() {
     println!("Payment successful. Submitting proof...");
 
     let pub_input_struct = PubInput {
-        map: deserialized.map,
         length: deserialized.length,
+        row: deserialized.row,
+        cols: deserialized.cols,
+        player_col: deserialized.player_col,
+        player_row: deserialized.player_row,
+        map: deserialized.map,
     };
     let pub_input = bincode::serialize(&pub_input_struct)
         .expect("Failed to serialize public input")
