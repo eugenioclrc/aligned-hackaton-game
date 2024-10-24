@@ -269,6 +269,7 @@ export class Game extends Scene
             });
 
             this.movements.push({
+                direction: dir,
                 playerCol: this.playerCol,
                 playerRow: this.playerRow,
                 playableMap: this.playableMap,
@@ -290,8 +291,31 @@ export class Game extends Scene
         if(this.boxes.every(b => {
             return this.boxTarget.includes(b.nameCords);
         })) {
-            alert('You win!');
+
+            const moves = this.movements.filter(e => e.direction).map(e => e.direction);
+            alert('You win! '+ directionsToHex(moves));
+
+
             this.scene.start('Game');
         }
     }
 }
+
+function directionsToHex(directions) {
+    const directionMap = {
+        'up': '00',
+        'left': '10',
+        'down': '01',
+        'right': '11'
+    };
+    debugger;
+
+        let bitString = directions.map(direction => directionMap[direction]).join('');
+        
+        // Convertir la cadena de bits a un número hexadecimal
+        let hexResult = parseInt(bitString, 2).toString(16).toUpperCase();
+        
+    
+    console.log(hexResult);  
+    return hexResult;
+    }
