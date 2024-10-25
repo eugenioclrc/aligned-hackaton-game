@@ -1,10 +1,9 @@
-
 #[derive(Clone, Copy, Debug)]
 pub enum Direction {
-    W = 0b00,  // arriba    = 00
-    A = 0b10,  // izquierda = 10
-    S = 0b01,  // abajo     = 01
-    D = 0b11   // derecha   = 11
+    W = 0b00, // arriba    = 00
+    A = 0b10, // izquierda = 10
+    S = 0b01, // abajo     = 01
+    D = 0b11, // derecha   = 11
 }
 
 impl Direction {
@@ -14,17 +13,13 @@ impl Direction {
             0b10 => Some(Direction::A),
             0b01 => Some(Direction::S),
             0b11 => Some(Direction::D),
-            _ => None
+            _ => None,
         }
     }
 }
 
-
-pub fn decode_moves(moves_bytes: Vec<u8>, total_moves: u32) -> Vec<Direction> {    
+pub fn decode_moves(moves_bytes: Vec<u8>, total_moves: u32) -> Vec<Direction> {
     // Convertir string hex a bytes
-
-    println!("Moves bytes: {:?}", moves_bytes.len());
-    println!("Moves bytes: {:?}", moves_bytes);
 
     let mut moves = Vec::new();
 
@@ -37,7 +32,7 @@ pub fn decode_moves(moves_bytes: Vec<u8>, total_moves: u32) -> Vec<Direction> {
                 println!("Direction: {:?} {:02b}", dir, dir_bits);
                 moves.push(dir);
             }
-            if(moves.len() as u32 == total_moves) {
+            if (moves.len() as u32 == total_moves) {
                 break;
             }
         }
