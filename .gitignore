@@ -6,3 +6,5 @@
 /aligned_verification_data/
 /prove/proof.bin
 /.DS_Store
+/program-test/target/
+/demo/target/
