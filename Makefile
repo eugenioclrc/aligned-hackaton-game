@@ -17,7 +17,7 @@ build-prover:
 
 proof:
 	@echo "Building PROVE files"
-	cd $(PROVE_DIR) && ./target/release/sokoban --moves '{"path":"0x08943fd894f5a000000000000000000000000000000000000000000000000000","length":26,"map":"todo"}' --keystore-path ~/.foundry/keystores/keystore0
+	cd $(PROVE_DIR) && ./target/release/sokoban --moves '{"rows":6,"cols":7,"map":"aaaa002844a222bc0aaaa0","player_row":2,"player_col":1,"path":"3FD89894F4F5A","length":26}' --keystore-path ~/.foundry/keystores/keystore0
 
 clean:
 	@echo "Cleaning all builds"

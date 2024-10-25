@@ -1,5 +1,4 @@
-
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, PartialEq, Debug)]
 pub enum Tile {
     Empty,
     Wall,
@@ -32,13 +31,6 @@ impl Tile {
     }
 }
 
-#[derive(Debug)]
-struct Level {
-    row: usize,
-    cols: usize,
-    map: String,  // The map is a string representing hex data
-}
-
 // Function to convert hex character to its numeric value
 fn hex_char_to_u8(c: char) -> u8 {
     match c {
@@ -49,15 +41,33 @@ fn hex_char_to_u8(c: char) -> u8 {
     }
 }
 
+#[derive(Debug)]
+pub struct Level {
+    pub rows: usize,
+    pub cols: usize,
+    pub map: Vec<Vec<Tile>>,
+    pub hex_map: String,
+}
+
 impl Level {
+    pub fn new(map: String, rows: u32, cols: u32) -> Self {
+        let hex_map = map.clone();
+
+        Level {
+            rows: rows as usize,
+            cols: cols as usize,
+            hex_map: hex_map,
+            map: bytes_to_level(map, rows, cols),
+        }
+    }
 
     // Converts hex string into Vec<Vec<Option<Tile>>>
     fn to_tile_vec(&self) -> Vec<Vec<Option<Tile>>> {
         // Remove "0x" prefix if present
-        let clean_hex = self.map.trim_start_matches("0x");
+        let clean_hex = self.hex_map.trim_start_matches("0x");
 
         // Assert that the hex string is long enough to store the map
-        let required_hex_length = (self.row * self.cols) / 2;
+        let required_hex_length = (self.rows * self.cols) / 2;
         assert!(
             clean_hex.len() >= required_hex_length,
             "Hex string is too short to represent the entire map!"
@@ -71,11 +81,11 @@ impl Level {
         for i in (0..chars.len()).step_by(2) {
             let high = hex_char_to_u8(chars[i]) << 4;
             let low = hex_char_to_u8(chars[i + 1]);
-            bytes.push(high | low);  // Combine the high and low nibbles to form a byte
+            bytes.push(high | low); // Combine the high and low nibbles to form a byte
         }
 
         // Iterate over the rows
-        for row in 0..self.row {
+        for row in 0..self.rows {
             let mut row_tiles = Vec::new();
 
             // Iterate over the columns
@@ -88,7 +98,7 @@ impl Level {
 
                 // Get the byte and extract the 2 bits that represent the tile
                 let byte = bytes[byte_index];
-                let bits = (byte >> (6 - bit_offset)) & 0b11;  // Shift to get the correct 2 bits
+                let bits = (byte >> (6 - bit_offset)) & 0b11; // Shift to get the correct 2 bits
 
                 // Convert the bits to a Tile
                 let tile = Tile::from_u8(bits);
@@ -107,7 +117,7 @@ impl Level {
         let cols = tiles[0].len();
         let total_tiles = rows * cols;
 
-        let mut byte_vec = vec![0u8; (total_tiles + 3) / 4];  // 2 bits per tile, 4 tiles per byte
+        let mut byte_vec = vec![0u8; (total_tiles + 3) / 4]; // 2 bits per tile, 4 tiles per byte
 
         // Iterate over the tiles and pack them into the byte array
         for row in 0..rows {
@@ -122,56 +132,117 @@ impl Level {
         }
 
         // Convert the byte array into a hexadecimal string
-        let hex_map: String = byte_vec.iter().map(|byte| format!("{:02x}", byte)).collect();
+        let hex_map: String = byte_vec
+            .iter()
+            .map(|byte| format!("{:02x}", byte))
+            .collect();
 
         Level {
-            row: rows,
+            rows: rows,
             cols: cols,
-            map: hex_map,
+            hex_map: hex_map,
+            map: tiles,
         }
     }
 }
 
-pub fn base_level() -> Vec<Vec<Tile>>{
+pub fn base_level() -> Vec<Vec<Tile>> {
     let level = vec![
-            vec![Tile::Wall,  Tile::Wall,  Tile::Wall,  Tile::Wall,  Tile::Wall,  Tile::Wall,  Tile::Wall],
-            vec![Tile::Wall,  Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty, Tile::Empty, Tile::Wall],
-            vec![Tile::Wall,  Tile::Empty, Tile::Box,   Tile::Empty, Tile::Box,   Tile::Empty, Tile::Wall],
-            vec![Tile::Wall,  Tile::Empty, Tile::Wall,  Tile::Empty, Tile::Wall,  Tile::Empty, Tile::Wall],
-            vec![Tile::Wall,  Tile::Target,Tile::Target,Tile::Empty, Tile::Empty, Tile::Empty, Tile::Wall],
-            vec![Tile::Wall,  Tile::Wall,  Tile::Wall,  Tile::Wall,  Tile::Wall,  Tile::Wall,  Tile::Wall],
-          
-];
-            
-        level
+        vec![
+            Tile::Wall,
+            Tile::Wall,
+            Tile::Wall,
+            Tile::Wall,
+            Tile::Wall,
+            Tile::Wall,
+            Tile::Wall,
+        ],
+        vec![
+            Tile::Wall,
+            Tile::Empty,
+            Tile::Empty,
+            Tile::Empty,
+            Tile::Empty,
+            Tile::Empty,
+            Tile::Wall,
+        ],
+        vec![
+            Tile::Wall,
+            Tile::Empty,
+            Tile::Box,
+            Tile::Empty,
+            Tile::Box,
+            Tile::Empty,
+            Tile::Wall,
+        ],
+        vec![
+            Tile::Wall,
+            Tile::Empty,
+            Tile::Wall,
+            Tile::Empty,
+            Tile::Wall,
+            Tile::Empty,
+            Tile::Wall,
+        ],
+        vec![
+            Tile::Wall,
+            Tile::Target,
+            Tile::Target,
+            Tile::Empty,
+            Tile::Empty,
+            Tile::Empty,
+            Tile::Wall,
+        ],
+        vec![
+            Tile::Wall,
+            Tile::Wall,
+            Tile::Wall,
+            Tile::Wall,
+            Tile::Wall,
+            Tile::Wall,
+            Tile::Wall,
+        ],
+    ];
+
+    level
 }
 
+pub fn bytes_to_level(level_bytes: String, rows: u32, cols: u32) -> Vec<Vec<Tile>> {
+    let level_bytes = string_to_bytes(&level_bytes);
+    // Check if the byte length is enough to cover all the tiles
+    let required_length = ((rows * cols + 3) / 4) as usize;
+    if level_bytes.len() < required_length {
+        panic!("Invalid level bytes length");
+    }
 
-pub fn uint256_to_level(level_bytes32: String) -> [[Tile; 8]; 8] {
-    let level_bytes = string_to_bytes(&level_bytes32);
+    let mut level = Vec::new();
 
-    let mut level = [[Tile::Empty; 8]; 8];
+    for row in 0..rows as usize {
+        let mut current_row: Vec<Tile> = Vec::new();
+        for col in 0..cols as usize {
+            let tile_index = row * cols as usize + col;
+            let byte_index = tile_index / 4;
+            let bit_offset = (tile_index % 4) * 2;
+            // Extract the correct 2 bits for the tile
+            let tile_bits = (level_bytes[byte_index] >> (6 - bit_offset)) & 0b11;
 
-    for row in 0..8 {
-        for col in 0..8 {
-            let shift_amount = (row * 8 + col) * 2;
-            let byte_index = shift_amount / 8;
-            let bit_index = shift_amount % 8;
-            let tile_bits = ((level_bytes[byte_index] >> bit_index) & 0b11) as u8;
             if let Some(tile) = Tile::from_u8(tile_bits) {
-                level[row][col] = tile;
+                current_row.push(tile);
+            } else {
+                panic!("Invalid tile bits encountered");
             }
         }
+        level.push(current_row);
     }
 
     level
 }
+
 pub fn string_to_bytes(hexa_string: &str) -> Vec<u8> {
     let mut hex = hexa_string.trim_start_matches("0x").to_string();
 
-    // Si la longitud es impar, agregar un "0" al principio
     if hex.len() % 2 != 0 {
-        hex = format!("{}0", hex);  // Prepending '0' to make it even length
+        hex = format!("{}0", hex); // Append '0' to make it even length
     }
 
     let mut bytes = Vec::<u8>::with_capacity(hex.len() / 2);

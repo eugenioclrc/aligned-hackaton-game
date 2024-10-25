@@ -13,7 +13,7 @@ mod game;
 use game::Game;
 
 mod level;
-use level::{base_level, string_to_bytes};
+use level::{string_to_bytes, Level};
 
 #[derive(Serialize, Deserialize)]
 struct FinalData {
@@ -48,8 +48,8 @@ fn main() {
     let moves = decode_moves(moves_bytes, total_moves);
     //println!("Decoded {} moves", moves.len());
     //println!("Moves sequence: {:?}", moves);
-
-    let mut game = Game::new(base_level(), deserialized.player_row, deserialized.player_col);
+    let l = Level::new(deserialized.map, deserialized.rows, deserialized.cols);
+    let mut game = Game::new(l.map, deserialized.player_row, deserialized.player_col);
     
     //println!("\nInitial state:");
     //game.print();
