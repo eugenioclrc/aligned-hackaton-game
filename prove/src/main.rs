@@ -23,7 +23,7 @@ use serde::{Deserialize, Serialize};
 struct FinalData {
     path: String,
     length: u128, // length is the amount of moves to solve the puzzle
-    row: u32,
+    rows: u32,
     cols: u32,
     player_col: u32,
     player_row: u32,
@@ -33,7 +33,7 @@ struct FinalData {
 #[derive(Serialize, Deserialize)]
 struct PubInput {
     length: u128, // length is the amount of moves to solve the puzzle
-    row: u32,
+    rows: u32,
     cols:u32,
     player_col: u32,
     player_row: u32,
@@ -153,7 +153,7 @@ async fn main() {
 
     let pub_input_struct = PubInput {
         length: deserialized.length,
-        row: deserialized.row,
+        rows: deserialized.rows,
         cols: deserialized.cols,
         player_col: deserialized.player_col,
         player_row: deserialized.player_row,
@@ -222,7 +222,7 @@ async fn claim_nft_with_verified_proof(
     aligned_verification_data: &AlignedVerificationData,
     signer: SignerMiddleware<Provider<Http>, LocalWallet>,
     verifier_contract_addr: &Address,
-    pub_input: &[u8],
+    pub_input: &Vec<u8>,
 ) -> anyhow::Result<()> {
     let verifier_contract = VerifierContract::new(*verifier_contract_addr, signer.into());
 
