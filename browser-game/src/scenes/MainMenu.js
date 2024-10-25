@@ -26,7 +26,7 @@ export class MainMenu extends Scene
 
             const leveldata = window.prompt("Enter the level json data", 
                 window.globalLevelData ? JSON.stringify(window.globalLevelData) :
-                '{"row":6,"cols":7,"map":"aaaa002844a222bc0aaaa0","playerRow":2,"playerCol":1}'
+                '{"row":6,"cols":7,"map":"aaaa002844a222bc0aaaa0","player_row":2,"player_col":1}'
             );
             try {
                 window.globalLevelData = JSON.parse(leveldata);

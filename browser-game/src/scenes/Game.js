@@ -1,6 +1,6 @@
 import { Scene } from 'phaser';
 
-//const gameData = {"row":6,"cols":7,"map":"aaaa002844a222bc0aaaa0","playerRow":2,"playerCol":1}
+//const gameData = {"row":6,"cols":7,"map":"aaaa002844a222bc0aaaa0","player_row":2,"player_col":1}
 
 import { Tile, Level } from '../lib/lib.js';
 
@@ -128,13 +128,13 @@ export class Game extends Scene
         });
 
         // Adding the player sprite at the initial position from gameData
-        this.player = this.add.sprite(gameData.playerCol * 64 + 32, gameData.playerRow * 64 + 32, 'player').setScale(0.5);
+        this.player = this.add.sprite(gameData.player_col * 64 + 32, gameData.player_row * 64 + 32, 'player').setScale(0.5);
         this.player.play('idle-down');
 
 
         // Position tracking
-        this.playerRow = gameData.playerRow;
-        this.playerCol = gameData.playerCol;
+        this.player_row = gameData.player_row;
+        this.player_col = gameData.player_col;
 
         //
 
@@ -147,12 +147,12 @@ export class Game extends Scene
 
 
         // Position tracking
-        this.playerRow = gameData.playerRow;
-        this.playerCol = gameData.playerCol;
+        this.player_row = gameData.player_row;
+        this.player_col = gameData.player_col;
 
         this.movements = [{
-            playerCol: this.playerCol,
-            playerRow: this.playerRow,
+            player_col: this.player_col,
+            player_row: this.player_row,
             playableMap: this.playableMap,
             boxes: this.boxes.map((b, i) => {
                 return {
@@ -241,8 +241,8 @@ export class Game extends Scene
         const lastMovement = this.movements[this.movements.length - 1];
         this.movements.pop()
 
-        this.playerCol = lastMovement.playerCol;
-        this.playerRow = lastMovement.playerRow;
+        this.player_col = lastMovement.player_col;
+        this.player_row = lastMovement.player_row;
 
         this.playableMap = lastMovement.playableMap;
         lastMovement.boxes.forEach(bm => {
@@ -253,8 +253,8 @@ export class Game extends Scene
         
         this.tweens.add({
             targets: this.player,
-            x: lastMovement.playerCol * 64 + 32,
-            y: lastMovement.playerRow * 64 + 32,
+            x: lastMovement.player_col * 64 + 32,
+            y: lastMovement.player_row * 64 + 32,
             duration: 300, // Animation duration in ms
             onComplete: () => {
                 this.isMoving = false; // Re-enable input when animation ends
@@ -280,8 +280,8 @@ export class Game extends Scene
         }
 
         let _map = this.playableMap;
-        const newRow = this.playerRow + deltaY;
-        const newCol = this.playerCol + deltaX;
+        const newRow = this.player_row + deltaY;
+        const newCol = this.player_col + deltaX;
 
         
         // Check if the new position is valid
@@ -318,14 +318,14 @@ export class Game extends Scene
             this.player.play(dir);
 
             // Update player's internal position
-            this.playerRow = newRow;
-            this.playerCol = newCol;
+            this.player_row = newRow;
+            this.player_col = newCol;
 
             // Tween to smoothly move the player
             this.tweens.add({
                 targets: this.player,
-                x: this.playerCol * 64 + 32,
-                y: this.playerRow * 64 + 32,
+                x: this.player_col * 64 + 32,
+                y: this.player_row * 64 + 32,
                 duration: 300, // Animation duration in ms
                 onComplete: () => {
                     this.isMoving = false; // Re-enable input when animation ends
@@ -336,8 +336,8 @@ export class Game extends Scene
 
             this.movements.push({
                 direction: dir,
-                playerCol: this.playerCol,
-                playerRow: this.playerRow,
+                player_col: this.player_col,
+                player_row: this.player_row,
                 playableMap: this.playableMap,
                 boxes: this.boxes.map((b, i) => {
                     return {
@@ -382,5 +382,8 @@ function directionsToBit(directions) {
 function directionsToHex(directions) {
     let bitString = directionsToBit(directions);
     if(bitString == '') return '0';
+    if(bitString.length % 4 !== 0) {
+        bitString = bitString+ '0'.repeat(4 - bitString.length % 4) ;
+    }
     return parseInt(bitString, 2).toString(16).toUpperCase();
 }
