@@ -36,12 +36,12 @@ function hexCharToByte(c) {
 
 export class Level {
     constructor(
-        {row,cols,map,playerRow,playerCol}) {
+        {row,cols,map,player_row,player_col}) {
         this.row = row;
         this.cols = cols;
         this.map = map;
-        this.playerRow = playerRow;
-        this.playerCol = playerCol;
+        this.player_row = player_row;
+        this.player_col = player_col;
     }
 
     // Convert hex string into 2D array of Tiles
@@ -85,8 +85,8 @@ export class Level {
 
         const byteVec = new Uint8Array(Math.ceil(totalTiles / 4));
 
-        let playerCol = null;
-        let playerRow = null;
+        let player_col = null;
+        let player_row = null;
         for (let row = 0; row < rows; row++) {
             for (let col = 0; col < cols; col++) {
                 const tileIndex = row * cols + col;
@@ -94,8 +94,8 @@ export class Level {
                 const bitOffset = (tileIndex % 4) * 2;
 
                 if(tiles[row][col] == Tile.Player) {
-                    playerCol = col;
-                    playerRow = row;
+                    player_col = col;
+                    player_row = row;
                 }
                 const bits = Tile.toBits(tiles[row][col]);
                 byteVec[byteIndex] |= bits << (6 - bitOffset);
@@ -104,7 +104,7 @@ export class Level {
 
         const hexMap = Array.from(byteVec, byte => byte.toString(16).padStart(2, '0')).join('');
 
-        return new Level(rows, cols, hexMap, playerRow, playerCol);
+        return new Level(rows, cols, hexMap, player_row, player_col);
     }
 }
 
