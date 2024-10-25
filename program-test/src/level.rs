@@ -146,67 +146,6 @@ impl Level {
     }
 }
 
-pub fn base_level() -> Vec<Vec<Tile>> {
-    let level = vec![
-        vec![
-            Tile::Wall,
-            Tile::Wall,
-            Tile::Wall,
-            Tile::Wall,
-            Tile::Wall,
-            Tile::Wall,
-            Tile::Wall,
-        ],
-        vec![
-            Tile::Wall,
-            Tile::Empty,
-            Tile::Empty,
-            Tile::Empty,
-            Tile::Empty,
-            Tile::Empty,
-            Tile::Wall,
-        ],
-        vec![
-            Tile::Wall,
-            Tile::Empty,
-            Tile::Box,
-            Tile::Empty,
-            Tile::Box,
-            Tile::Empty,
-            Tile::Wall,
-        ],
-        vec![
-            Tile::Wall,
-            Tile::Empty,
-            Tile::Wall,
-            Tile::Empty,
-            Tile::Wall,
-            Tile::Empty,
-            Tile::Wall,
-        ],
-        vec![
-            Tile::Wall,
-            Tile::Target,
-            Tile::Target,
-            Tile::Empty,
-            Tile::Empty,
-            Tile::Empty,
-            Tile::Wall,
-        ],
-        vec![
-            Tile::Wall,
-            Tile::Wall,
-            Tile::Wall,
-            Tile::Wall,
-            Tile::Wall,
-            Tile::Wall,
-            Tile::Wall,
-        ],
-    ];
-
-    level
-}
-
 pub fn bytes_to_level(level_bytes: String, rows: u32, cols: u32) -> Vec<Vec<Tile>> {
     let level_bytes = string_to_bytes(&level_bytes);
     // Check if the byte length is enough to cover all the tiles

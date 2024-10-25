@@ -27,6 +27,16 @@ struct FinalData {
     player_row: u32,
     map: String
 }
+
+#[derive(Serialize, Deserialize)]
+struct PubInput {
+    length: u128, // length is the amount of moves to solve the puzzle
+    rows: u32,
+    cols:u32,
+    player_col: u32,
+    player_row: u32,
+    map: Vec<u8>,
+}
 fn main() {
     
     let zkinput = sp1_zkvm::io::read::<String>();
@@ -36,9 +46,17 @@ fn main() {
     let input = deserialized.path;
     let total_moves = deserialized.length;
 
+    let raw_map = hex::decode(deserialized.map.clone()).expect("Decoding hex map failed");
+
     // commit the score
-    sp1_zkvm::io::commit::<u32>(&total_moves);
-    sp1_zkvm::io::commit::<String>(&deserialized.map); // should i also commit the map?
+    sp1_zkvm::io::commit::<PubInput>(&PubInput {
+        length: total_moves as u128,
+        rows: deserialized.rows,
+        cols: deserialized.cols,
+        player_col: deserialized.player_col,
+        player_row: deserialized.player_row,
+        map: raw_map,
+    });
 
     // totalMoves number string to usize
 

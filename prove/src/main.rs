@@ -37,7 +37,7 @@ struct PubInput {
     cols:u32,
     player_col: u32,
     player_row: u32,
-    map: String,
+    map: Vec<u8>,
 }
 
 /// The ELF (executable and linkable format) file for the Succinct RISC-V zkVM.
@@ -151,13 +151,15 @@ async fn main() {
 
     println!("Payment successful. Submitting proof...");
 
+    let raw_map = hex::decode(deserialized.map.clone()).expect("Decoding hex map failed");
+
     let pub_input_struct = PubInput {
         length: deserialized.length,
         rows: deserialized.rows,
         cols: deserialized.cols,
         player_col: deserialized.player_col,
         player_row: deserialized.player_row,
-        map: deserialized.map,
+        map: raw_map,
     };
     let pub_input = bincode::serialize(&pub_input_struct)
         .expect("Failed to serialize public input")

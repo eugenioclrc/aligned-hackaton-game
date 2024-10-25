@@ -632,6 +632,7 @@ dependencies = [
 name = "sokoban-program"
 version = "0.1.0"
 dependencies = [
+ "hex",
  "serde",
  "serde_json",
  "sp1-zkvm",
