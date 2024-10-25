@@ -11,6 +11,8 @@ use ethers::prelude::*;
 use ethers::providers::{Http, Provider};
 use ethers::signers::{LocalWallet, Signer};
 use ethers::types::{Address, Bytes, H160, U256};
+use ethers::abi::{Token, encode};
+
 use sp1_sdk::{ProverClient, SP1Stdin};
 
 abigen!(VerifierContract, "VerifierContract.json",);
@@ -38,6 +40,27 @@ struct PubInput {
     player_col: u32,
     player_row: u32,
     map: Vec<u8>,
+}
+impl PubInput {
+    pub fn encode_to_bytes(&self) -> Bytes {
+        // Convert struct fields into ABI-encodable tokens
+        let tokens = vec![
+            Token::Uint(self.length.into()),
+            Token::Uint(self.rows.into()),
+            Token::Uint(self.cols.into()),
+            Token::Uint(self.player_col.into()),
+            Token::Uint(self.player_row.into()),
+            Token::Bytes(self.map.clone()),
+        ];
+
+        // Encode the tokens into bytes
+        Bytes::from(encode(&tokens))
+    }
+
+    // Helper function if you need the raw Vec<u8>
+    pub fn encode_to_vec(&self) -> Vec<u8> {
+        self.encode_to_bytes().to_vec()
+    }
 }
 
 /// The ELF (executable and linkable format) file for the Succinct RISC-V zkVM.
@@ -161,9 +184,11 @@ async fn main() {
         player_row: deserialized.player_row,
         map: raw_map,
     };
-    let pub_input = bincode::serialize(&pub_input_struct)
-        .expect("Failed to serialize public input")
-        .to_vec();
+
+    // Get bytes ready for contract submission
+    //let encoded: Bytes = pub_input_struct.encode_to_bytes();
+    let encoded_vec: Vec<u8> = pub_input_struct.encode_to_vec();
+
 
     let verification_data = VerificationData {
         proving_system: ProvingSystemId::SP1,
@@ -171,7 +196,7 @@ async fn main() {
         proof_generator_addr: wallet.address(),
         vm_program_code: Some(SOKOBAN_ELF.to_vec()),
         verification_key: None,
-        pub_input: Some(pub_input.clone()),
+        pub_input: Some(encoded_vec),
     };
 
     let max_fee = estimate_fee(&rpc_url, PriceEstimate::Default)
@@ -214,7 +239,7 @@ async fn main() {
         &aligned_verification_data,
         signer,
         &args.verifier_contract_address,
-        &pub_input.clone()
+        &pub_input_struct.encode_to_vec(),
     )
     .await
     .expect("Claiming of NFT failed ...");
