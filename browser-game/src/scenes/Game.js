@@ -136,6 +136,10 @@ export class Game extends Scene
         this.player_row = gameData.player_row;
         this.player_col = gameData.player_col;
 
+        if(this.playableMap[0].length > 16 || this.playableMap.length > 12) {
+            //this.cam.setScale(0.5 );
+            this.cameras.main.startFollow(this.player)
+        }
         //
 
         // Keyboard input
@@ -174,24 +178,25 @@ export class Game extends Scene
 
         this.cameras.main.setBounds(this.map.x, this.map.y, this.map.widthInPixels * 2, this.map.heightInPixels * 2);
         
-        //this.cameras.main.startFollow(this.player, true);
 
-        this.input.keyboard.on('keydown-R', event =>
-            {
-                if (confirm("Are you sure you want to restart the level?")) {
-                    
-                    this.scene.start('Game');
-                }
+        this.input.keyboard.on('keydown-ONE', event => this.cameras.main.setZoom(1));
+        this.input.keyboard.on('keydown-TWO', event => this.cameras.main.setZoom(0.9));
+        this.input.keyboard.on('keydown-THREE', event => this.cameras.main.setZoom(.8));
+        this.input.keyboard.on('keydown-FOUR', event => this.cameras.main.setZoom(.7));
+        this.input.keyboard.on('keydown-FIVE', event => this.cameras.main.setZoom(.6));
+        window.c=this.cameras.main
 
-            });
+        this.input.keyboard.on('keydown-R', event => {
+            if (confirm("Are you sure you want to restart the level?")) {
+                this.scene.start('Game');
+            }
+        });
 
+        this.input.keyboard.on('keydown-BACKSPACE', event => {
+            this.undoMovement();
+        });
 
-        this.input.keyboard.on('keydown-BACKSPACE', event =>
-            {
-                this.undoMovement();
-            });
-
-            this.text = this.add.text(32, this.cameras.main.height - 240).setScrollFactor(0).setFontSize(32).setColor('#ffffff');
+        this.text = this.add.text(32, this.cameras.main.height - 240).setScrollFactor(0).setFontSize(32).setColor('#ffffff');
 
 
     }
