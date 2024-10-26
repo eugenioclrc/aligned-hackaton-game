@@ -6,14 +6,7 @@
 sp1_zkvm::entrypoint!(main);
 use serde::{Deserialize, Serialize};
 
-mod directions;
-use directions::decode_moves;
-
-mod game;
-use game::Game;
-
-mod level;
-use level::{string_to_bytes, Level};
+use sokoban::{decode_moves, string_to_bytes, Game, Level};
 
 #[derive(Serialize, Deserialize)]
 struct FinalData {
@@ -25,20 +18,19 @@ struct FinalData {
     cols: u32,
     player_col: u32,
     player_row: u32,
-    map: String
+    map: String,
 }
 
 #[derive(Serialize, Deserialize)]
 struct PubInput {
     length: u128, // length is the amount of moves to solve the puzzle
     rows: u32,
-    cols:u32,
+    cols: u32,
     player_col: u32,
     player_row: u32,
     map: Vec<u8>,
 }
 fn main() {
-    
     let zkinput = sp1_zkvm::io::read::<String>();
 
     let deserialized: FinalData = serde_json::from_str(&zkinput).unwrap();
@@ -68,23 +60,11 @@ fn main() {
     //println!("Moves sequence: {:?}", moves);
     let l = Level::new(deserialized.map, deserialized.rows, deserialized.cols);
     let mut game = Game::new(l.map, deserialized.player_row, deserialized.player_col);
-    
+
     //println!("\nInitial state:");
     //game.print();
     //println!("\nPress Enter to start simulation...");
     //io::stdin().read_line(&mut String::new()).unwrap();
+    game.play(moves);
 
-    for (_i, &direction) in moves.iter().enumerate() {
-        if !game.move_player(direction) || game.is_won() {
-            break;
-        }
-    }
-
-    if !game.is_won() {
-        panic!("Solution did not solve the puzzle!");
-        //println!("\nSolution did not solve the puzzle!");
-    }
-    if game.moves != total_moves {
-        panic!("Solution has different moves than expected!");
-    }
 }

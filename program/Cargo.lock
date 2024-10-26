@@ -629,12 +629,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "sokoban"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "sokoban-program"
 version = "0.1.0"
 dependencies = [
  "hex",
  "serde",
  "serde_json",
+ "sokoban",
  "sp1-zkvm",
 ]
 

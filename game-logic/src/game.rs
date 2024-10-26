@@ -119,4 +119,18 @@ impl Game {
             _ => false,
         }
     }
+
+    pub fn play(&mut self, moves: Vec<Direction>) {
+        for (_i, &direction) in moves.iter().enumerate() {
+            if !self.move_player(direction) || self.is_won() {
+                break;
+            }
+        }
+        if self.moves != moves.len() as u32 {
+            panic!("Solution has different moves than expected!");
+        } else if !self.is_won() {
+            panic!("Solution did not solve the puzzle!");
+        }
+       
+    }
 }

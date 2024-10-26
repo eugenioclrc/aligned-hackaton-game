@@ -25,9 +25,9 @@ export class Game extends Scene
         this.playableMap = (new Level(gameData)).toTileArray();
         let _map = this.playableMap;
 
-        this.cameras.main.setBackgroundColor(0x000);
-
         //this.add.image(512, 384, 'background').setAlpha(0.5);
+
+        this.cameras.main.setBackgroundColor(0x648e9a /* 0x596a6d*/);
 
     
         // Creating a blank tilemap with the specified dimensions

@@ -1,5 +1,3 @@
-use std::io;
-
 use aligned_sdk::core::types::{
     AlignedVerificationData, Network, PriceEstimate, ProvingSystemId, VerificationData,
 };
@@ -7,19 +5,20 @@ use aligned_sdk::sdk::{deposit_to_aligned, estimate_fee};
 use aligned_sdk::sdk::{get_next_nonce, submit_and_wait_verification};
 use clap::Parser;
 use dialoguer::Confirm;
+use ethers::abi::{encode, Token};
 use ethers::prelude::*;
 use ethers::providers::{Http, Provider};
 use ethers::signers::{LocalWallet, Signer};
 use ethers::types::{Address, Bytes, H160, U256};
-use ethers::abi::{Token, encode};
 
 use sp1_sdk::{ProverClient, SP1Stdin};
 
+// somehow this not work
+// use sokoban::{decode_moves, string_to_bytes, Game, Level};
+
 abigen!(VerifierContract, "VerifierContract.json",);
 
-
 use serde::{Deserialize, Serialize};
-
 
 #[derive(Serialize, Deserialize)]
 struct FinalData {
@@ -36,7 +35,7 @@ struct FinalData {
 struct PubInput {
     length: u128, // length is the amount of moves to solve the puzzle
     rows: u32,
-    cols:u32,
+    cols: u32,
     player_col: u32,
     player_row: u32,
     map: Vec<u8>,
@@ -71,7 +70,7 @@ pub const SOKOBAN_ELF: &[u8] = include_bytes!("../../program/elf/riscv32im-succi
 #[clap(author, version, about, long_about = None)]
 struct Args {
     #[clap(long)]
-    moves: String,
+    data: String,
 
     #[arg(short, long)]
     keystore_path: String,
@@ -85,7 +84,11 @@ struct Args {
     batcher_url: String,
     #[arg(short, long, default_value = "holesky")]
     network: Network,
-    #[arg(short, long, default_value = "0x2A7187502059feA9f55F5b1656f5Ac2875721608")]
+    #[arg(
+        short,
+        long,
+        default_value = "0x2A7187502059feA9f55F5b1656f5Ac2875721608"
+    )]
     verifier_contract_address: H160,
 }
 
@@ -97,21 +100,9 @@ async fn main() {
     // Parse the command line arguments.
     let args = Args::parse();
 
-    let deserialized: FinalData = serde_json::from_str(&args.moves).unwrap();
+    let deserialized: FinalData = serde_json::from_str(&args.data).unwrap();
 
-    println!("path: {}", deserialized.path);
-    println!("length: {}", deserialized.length);
-    println!("map: {}", deserialized.map);
-  
-
-    // Setup the inputs.
-    let mut stdin = SP1Stdin::new();
-    // moves is the serde output
-    stdin.write(&args.moves);
-    // Setup the prover client.
-    let client = ProverClient::new();
-    // Setup the program for proving.
-    let (pk, vk) = client.setup(SOKOBAN_ELF);
+    //test_game(serde_json::from_str(&args.moves).unwrap());
 
     let rpc_url = args.rpc_url.clone();
 
@@ -141,30 +132,29 @@ async fn main() {
         .expect("Failed to pay for proof submission");
     }
 
-   
+    // Setup the inputs.
+    let mut stdin = SP1Stdin::new();
+    // moves is the serde output
+    stdin.write(&args.data);
+    // Setup the prover client.
+    let client = ProverClient::new();
+    // Setup the program for proving.
+    let (pk, vk) = client.setup(SOKOBAN_ELF);
 
-    // Generate the proof
+    // Generate the proof, early fail if its wrong
 
     let proof = client
         .prove(&pk, stdin)
         .run()
         .expect("failed to generate proof");
 
-    println!("Successfully generated proof!");
-
     // Verify the proof.
     client.verify(&proof, &vk).expect("failed to verify proof");
     println!("Successfully verified proof!");
 
-
     println!("Generating Proof ");
 
-    let client = ProverClient::new();
-    let (pk, vk) = client.setup(SOKOBAN_ELF);
-
-    
     println!("Proof generated successfully. Verifying proof...");
-    client.verify(&proof, &vk).expect("verification failed");
     println!("Proof verified successfully.");
 
     println!("Payment successful. Submitting proof...");
@@ -189,7 +179,6 @@ async fn main() {
     //let encoded: Bytes = pub_input_struct.encode_to_bytes();
     let encoded_vec: Vec<u8> = pub_input_struct.encode_to_vec();
 
-
     let verification_data = VerificationData {
         proving_system: ProvingSystemId::SP1,
         proof,
@@ -202,7 +191,7 @@ async fn main() {
     let max_fee = estimate_fee(&rpc_url, PriceEstimate::Default)
         .await
         .expect("failed to fetch gas price from the blockchain");
-    
+
     let max_fee_string = ethers::utils::format_units(max_fee, 18).unwrap();
 
     if !Confirm::with_theme(&dialoguer::theme::ColorfulTheme::default())
@@ -215,7 +204,7 @@ async fn main() {
         .await
         .expect("Failed to get next nonce");
 
-        println!("Submitting your proof...");
+    println!("Submitting your proof...");
 
     let aligned_verification_data = submit_and_wait_verification(
         &args.batcher_url,
@@ -259,9 +248,9 @@ async fn claim_nft_with_verified_proof(
             .batch_inclusion_proof
             .merkle_path
             .as_slice()
-            .into_iter()  // Convert the slice reference into an iterator
-            .flatten()    // Now flatten the iterator
-            .copied()     // Copy the elements because we are working with references
+            .into_iter() // Convert the slice reference into an iterator
+            .flatten() // Now flatten the iterator
+            .copied() // Copy the elements because we are working with references
             .collect::<Vec<u8>>(),
     );
 
@@ -303,3 +292,25 @@ async fn claim_nft_with_verified_proof(
         }
     }
 }
+
+/*
+fn test_game(deserialized: FinalData) {
+    let input = deserialized.path;
+    let total_moves = deserialized.length;
+
+    let raw_map = hex::decode(deserialized.map.clone()).expect("Decoding hex map failed");
+
+    // totalMoves number string to usize
+
+    let input = input.trim();
+
+    let moves_bytes = string_to_bytes(input);
+    let moves = decode_moves(moves_bytes, total_moves);
+    //println!("Decoded {} moves", moves.len());
+    //println!("Moves sequence: {:?}", moves);
+    let l = Level::new(deserialized.map, deserialized.rows, deserialized.cols);
+    let mut game = Game::new(l.map, deserialized.player_row, deserialized.player_col);
+    game.play(moves);
+    println!("Game completed successfully");
+}
+    */

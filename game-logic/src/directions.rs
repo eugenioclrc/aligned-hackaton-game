@@ -30,7 +30,7 @@ pub fn decode_moves(moves_bytes: Vec<u8>, total_moves: u32) -> Vec<Direction> {
             if let Some(dir) = Direction::from_u8(dir_bits) {
                 moves.push(dir);
             }
-            if (moves.len() as u32 == total_moves) {
+            if moves.len() as u32 == total_moves {
                 break;
             }
         }
