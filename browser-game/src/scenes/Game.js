@@ -363,7 +363,10 @@ graphics.strokeRect(borderX, borderY, borderWidth, borderHeight);
                 onComplete: () => {
                     this.isMoving = false; // Re-enable input when animation ends
                     this.player.play('idle-'+this.player.anims.currentAnim.key);
-                    this.checkWin();
+                    setTimeout(() => {
+                        this.checkWin(),
+                        100
+                        });
                 }
             });
 
@@ -399,7 +402,14 @@ graphics.strokeRect(borderX, borderY, borderWidth, borderHeight);
         })) {
 
             const moves = this.movements.filter(e => e.direction).map(e => e.direction);
-            alert('You win! '+ directionsToHex(moves));
+
+            let l = JSON.parse(JSON.stringify(window.globalLevelData));
+            l.path = directionsToHex(moves)
+            l.length = moves.length;
+
+            let command = `./prove/target/release/sokoban --data '${JSON.stringify(l)}' --keystore-path ~/.foundry/keystores/keystore0`;
+            window.prompt("You win! submit with", command);
+            console.log(command);
 
             this.scene.start('Game');
         }
