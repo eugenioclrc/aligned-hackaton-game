@@ -9,7 +9,7 @@ Every map is represented by this data:
 ```json
 {
     "map": "hexadecimal that represent the tiles in de map, 00 empty, 10 wall, 01 box, 11 Target to put the box",
-    "row": "u32 width of the map",
+    "rows": "u32 width of the map",
     "cols": "u32 height of the map",
     "player_col": "u32 player start pos col",
     "player_row": "u32 player start pos row",
@@ -25,7 +25,7 @@ The proover will use the next data to prove the game:
     "path": "hexadecimal that represent the path to solve the game",
     "length": "u32 length of the path",
     "map": "hexadecimal that represent the tiles in de map, 00 empty, 10 wall, 01 box, 11 Target to put the box",
-    "row": "u32 width of the map",
+    "rows": "u32 width of the map",
     "cols": "u32 height of the map",
     "player_col": "u32 player start pos col",
     "player_row": "u32 player start pos row"
@@ -37,7 +37,7 @@ Finally the public inputs used on the contract are:
 {
     "length": "u32 length of the path",
     "map": "hexadecimal that represent the tiles in de map, 00 empty, 10 wall, 01 box, 11 Target to put the box",
-    "row": "u32 width of the map",
+    "rows": "u32 width of the map",
     "cols": "u32 height of the map",
     "player_col": "u32 player start pos col",
     "player_row": "u32 player start pos row"
