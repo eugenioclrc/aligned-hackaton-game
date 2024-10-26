@@ -3,8 +3,9 @@ solc_version = '0.8.27'
 src = "src"
 out = "out"
 libs = ["lib"]
-optimizer = false
-optimizer_runs = 5000
+optimizer = true
+optimizer_runs = 10000
+via-ir = true
 evm_version="cancun"
 
 [dependencies]
