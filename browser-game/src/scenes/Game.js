@@ -29,9 +29,14 @@ export class Game extends Scene
 
         this.cameras.main.setBackgroundColor(0x648e9a /* 0x596a6d*/);
 
-    
-        // Creating a blank tilemap with the specified dimensions
-        this.map = this.make.tilemap({ tileWidth: 128, tileHeight: 128, width: _map[0].length, height: _map.length  });
+        try {
+            // Creating a blank tilemap with the specified dimensions
+            this.map = this.make.tilemap({ tileWidth: 128, tileHeight: 128, width: _map[0].length, height: _map.length  });
+        } catch (e) {
+            alert("Invalid LEVEL JSON data");
+            this.scene.start('LevelSelect');
+        }
+        
         const tiles = this.map.addTilesetImage('tiles');
 
         const layerBg = this.map.createBlankLayer('layerBg', tiles);
@@ -61,10 +66,9 @@ export class Game extends Scene
                     this.boxes.push( b.setScale(0.5));
                     //layer.putTileAt(1, x, y);
                 } else if(tile === Tile.Target) {
-                    layer.putTileAt(40, x, y);
+                    layer.putTileAt(39, x, y);
                     this.boxTarget.push(`${y}-${x}`);
                 } else if(tile === Tile.Empty) {
-
                 }
             });
         });
@@ -192,24 +196,31 @@ export class Game extends Scene
             }
         });
 
+        this.input.keyboard.on('keydown-L', event => {
+            if (confirm("Are you sure you want to select the level?")) {
+                this.scene.start('LevelSelect');
+            }
+        });
+
+        
+
         this.input.keyboard.on('keydown-BACKSPACE', event => {
             this.undoMovement();
         });
 
-        this.text = this.add.text(32, this.cameras.main.height - 240).setScrollFactor(0).setFontSize(32).setColor('#ffffff');
+        this.text = this.add.text(32, this.cameras.main.height - 280).setScrollFactor(0).setFontSize(32).setColor('#ffffff');
 
 
     }
 
     update () {
 
-
-        var cam = this.cameras.main;
             this.text.setText([
                 'Commands:',
                 '- Use arrows or WASD to move',
                 '- R to restart',
                 '- BACKSPACE to undo',
+                '- L to select level',
                 'Total moves: ' + String(this.movements.length - 1),
                 'Encode movements (hex): 0x' + directionsToHex(this.movements.filter(e => e.direction).map(e => e.direction)),
                 'Encode movements (bit): ' + directionsToBit(this.movements.filter(e => e.direction).map(e => e.direction)),
@@ -358,6 +369,13 @@ export class Game extends Scene
     }
 
     checkWin() {
+        this.boxes.forEach(b => {
+            if(this.boxTarget.includes(b.nameCords)) {
+               b.setFrame(14);
+            } else {
+                b.setFrame(1);
+            }
+        });
         // check if the game is win using boxTarget
         if(this.boxes.every(b => {
             return this.boxTarget.includes(b.nameCords);
@@ -365,7 +383,6 @@ export class Game extends Scene
 
             const moves = this.movements.filter(e => e.direction).map(e => e.direction);
             alert('You win! '+ directionsToHex(moves));
-
 
             this.scene.start('Game');
         }

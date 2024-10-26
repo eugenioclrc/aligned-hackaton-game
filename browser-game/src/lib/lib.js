@@ -36,8 +36,8 @@ function hexCharToByte(c) {
 
 export class Level {
     constructor(
-        {row,cols,map,player_row,player_col}) {
-        this.row = row;
+        {rows,cols,map,player_row,player_col}) {
+        this.rows = rows;
         this.cols = cols;
         this.map = map;
         this.player_row = player_row;
@@ -47,7 +47,7 @@ export class Level {
     // Convert hex string into 2D array of Tiles
     toTileArray() {
         const cleanHex = (this.map || '').startsWith("0x") ? this.map.slice(2) : this.map;
-        const requiredHexLength = Math.ceil((this.row * this.cols) / 2);
+        const requiredHexLength = Math.ceil((this.rows * this.cols) / 2);
 
         if (cleanHex.length < requiredHexLength) {
             throw new Error("Hex string is too short to represent the entire map!");
@@ -61,7 +61,7 @@ export class Level {
         }
 
         const tiles = [];
-        for (let row = 0; row < this.row; row++) {
+        for (let row = 0; row < this.rows; row++) {
             const rowTiles = [];
             for (let col = 0; col < this.cols; col++) {
                 const tileIndex = row * this.cols + col;

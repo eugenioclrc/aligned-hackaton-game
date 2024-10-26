@@ -23,11 +23,13 @@ export class MainMenu extends Scene
         }).setOrigin(0.5);
 
         this.input.on('pointerdown', () => {
-
+           // LevelSelect
+            this.scene.start('LevelSelect');
+return;
             const leveldata = window.prompt("Enter the level json data", 
                 window.globalLevelData ? JSON.stringify(window.globalLevelData) :
-                //'{"row":17,"cols":34,"map":"000000000aaaaaaaa2aaaaaaaa800000022000000008a8a80a2220a2aa8000000008228200088a8aaa02020a2aa88880000002200000000aaaaaa2a20a22aaa000000002200000000aaaaa8a820a200084b2aaa0a8228aa2aa080002a0aa2002202a8880000082a8a2000088aaa828000002aaa8882082a2aaa2200800000002208222a8aaaaaaa0200000000000000aa0","player_row":9,"player_col":17}'
-                '{"row":6,"cols":7,"map":"aaaa002844a222bc0aaaa0","player_row":2,"player_col":1}'
+                //'{"rows":17,"cols":34,"map":"000000000aaaaaaaa2aaaaaaaa800000022000000008a8a80a2220a2aa8000000008228200088a8aaa02020a2aa88880000002200000000aaaaaa2a20a22aaa000000002200000000aaaaa8a820a200084b2aaa0a8228aa2aa080002a0aa2002202a8880000082a8a2000088aaa828000002aaa8882082a2aaa2200800000002208222a8aaaaaaa0200000000000000aa0","player_row":9,"player_col":17}'
+                '{"rows":6,"cols":7,"map":"aaaa002844a222bc0aaaa0","player_row":2,"player_col":1}'
             );
             try {
                 window.globalLevelData = JSON.parse(leveldata);

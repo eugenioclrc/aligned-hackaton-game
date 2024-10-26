@@ -2,6 +2,7 @@ import { Boot } from './scenes/Boot';
 import { Game } from './scenes/Game';
 import { GameOver } from './scenes/GameOver';
 import { MainMenu } from './scenes/MainMenu';
+import { LevelSelect } from './scenes/LevelSelect';
 import { Preloader } from './scenes/Preloader';
 
 //  Find out more information about the Game Config at:
@@ -9,7 +10,7 @@ import { Preloader } from './scenes/Preloader';
 const config = {
     type: Phaser.AUTO,
     width: 1024,
-    height: 768,
+    height: 980,
     parent: 'game-container',
     backgroundColor: '#028af8',
     scale: {
@@ -20,6 +21,7 @@ const config = {
         Boot,
         Preloader,
         MainMenu,
+        LevelSelect,
         Game,
         GameOver
     ]

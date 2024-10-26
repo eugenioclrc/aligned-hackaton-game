@@ -36,8 +36,8 @@ function hexCharToByte(c) {
 }
 
 class Level {
-    constructor(row, cols, map, player_row, player_col) {
-        this.row = row;
+    constructor(rows, cols, map, player_row, player_col) {
+        this.rows = rows;
         this.cols = cols;
         this.map = map;
         this.player_row = player_row;
@@ -47,7 +47,7 @@ class Level {
     // Convert hex string into 2D array of Tiles
     toTileArray() {
         const cleanHex = this.map.startsWith("0x") ? this.map.slice(2) : this.map;
-        const requiredHexLength = Math.ceil((this.row * this.cols) / 2);
+        const requiredHexLength = Math.ceil((this.rows * this.cols) / 2);
 
         if (cleanHex.length < requiredHexLength) {
             throw new Error("Hex string is too short to represent the entire map!");
@@ -122,23 +122,13 @@ console.log(Level.fromTileArray(tiles)); // Create a Level from a 2D array of Ti
 console.log(`\n\n\nRun with;\n./game --map ${JSON.stringify(Level.fromTileArray(tiles))}`); // Create a Level from a 2D array of Tiles
 
 const tilesLab = [
-    [Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall],
-    [Tile.Empty, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Wall],
-    [Tile.Empty, Tile.Wall, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Wall, Tile.Empty, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Empty, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Wall, Tile.Wall, Tile.Empty, Tile.Wall],
-    [Tile.Empty, Tile.Wall, Tile.Empty, Tile.Wall, Tile.Empty, Tile.Empty, Tile.Wall, Tile.Wall, Tile.Empty, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Wall],
-    [Tile.Empty, Tile.Wall, Tile.Empty, Tile.Wall, Tile.Wall, Tile.Empty, Tile.Empty, Tile.Wall, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Wall, Tile.Empty, Tile.Wall, Tile.Empty, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Empty, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Wall, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Wall],
-    [Tile.Empty, Tile.Wall, Tile.Empty, Tile.Empty, Tile.Wall, Tile.Wall, Tile.Empty, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Empty, Tile.Wall, Tile.Empty, Tile.Wall, Tile.Empty, Tile.Wall, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Wall],
-    [Tile.Empty, Tile.Wall, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Empty, Tile.Wall, Tile.Wall, Tile.Wall],
-    [Tile.Empty, Tile.Wall, Tile.Empty, Tile.Empty, Tile.Wall, Tile.Wall, Tile.Empty, Tile.Wall, Tile.Empty, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Wall],
-    [Tile.Empty, Tile.Wall, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Empty, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Empty, Tile.Wall],
-    [Tile.Empty, Tile.Wall, Tile.Empty, Tile.Empty, Tile.Wall, Tile.Wall, Tile.Empty, Tile.Wall, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Wall, Tile.Empty, Tile.Box, Tile.Player, Tile.Wall, Tile.Target, Tile.Empty, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Empty, Tile.Empty, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Empty, Tile.Wall],
-    [Tile.Empty, Tile.Wall, Tile.Empty, Tile.Wall, Tile.Wall, Tile.Empty, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Empty, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Empty, Tile.Empty, Tile.Wall, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Empty, Tile.Empty, Tile.Wall, Tile.Wall, Tile.Wall],
-    [Tile.Wall, Tile.Wall, Tile.Empty, Tile.Wall, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Wall, Tile.Empty, Tile.Wall, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Empty, Tile.Wall, Tile.Empty, Tile.Wall, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Wall],
-    [Tile.Wall, Tile.Empty, Tile.Empty, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Empty, Tile.Wall, Tile.Wall, Tile.Empty, Tile.Wall, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Wall, Tile.Empty, Tile.Wall, Tile.Empty, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Empty, Tile.Empty, Tile.Wall],
-    [Tile.Wall, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Empty, Tile.Wall, Tile.Empty, Tile.Wall, Tile.Empty, Tile.Empty, Tile.Wall, Tile.Empty, Tile.Empty, Tile.Wall, Tile.Empty, Tile.Empty, Tile.Wall],
-    [Tile.Wall, Tile.Wall, Tile.Empty, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Empty, Tile.Wall, Tile.Empty, Tile.Wall, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Wall, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Wall],
-    [Tile.Empty, Tile.Wall, Tile.Empty, Tile.Wall, Tile.Empty, Tile.Empty, Tile.Wall, Tile.Empty, Tile.Empty, Tile.Wall, Tile.Empty, Tile.Wall, Tile.Empty, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Empty, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Empty, Tile.Empty, Tile.Wall],
-    [Tile.Empty, Tile.Wall, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall]
+    [Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Empty, Tile.Empty, Tile.Empty],
+    [Tile.Wall, Tile.Empty, Tile.Target, Tile.Wall, Tile.Empty, Tile.Empty, Tile.Empty],
+    [Tile.Wall, Tile.Empty, Tile.Empty, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall],
+    [Tile.Wall, Tile.Target, Tile.Box, Tile.Player, Tile.Empty, Tile.Empty, Tile.Wall],
+    [Tile.Wall, Tile.Empty, Tile.Empty, Tile.Box, Tile.Empty, Tile.Empty, Tile.Wall],
+    [Tile.Wall, Tile.Empty, Tile.Empty, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall],
+    [Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Empty, Tile.Empty, Tile.Empty],
 ];
 
 
