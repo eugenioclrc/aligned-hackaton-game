@@ -33,6 +33,16 @@ contract Verifier {
         paymentServiceAddr = _paymentServiceAddr;
     }
 
+    function getMap(bytes memory publicInputBytes) internal pure returns (uint256 tokenId, Map memory, uint256 stepsNumber) {
+        (uint256 stepsNumber, uint256 rows, uint256 cols, uint256 playerCol, uint256 playerRow, bytes memory mapData) =
+            abi.decode(publicInputBytes, (uint256, uint256, uint256, uint256, uint256, bytes));
+        return (
+            uint256(keccak256(abi.encode(rows, cols, playerCol, playerRow, mapData))),
+            Map({rows: rows, cols: cols, playerCol: playerCol, playerRow: playerRow, mapData: mapData}),
+            stepsNumber
+        );
+    }
+
     function verifyBatchInclusion(
         bytes32 proofCommitment,
         bytes32 pubInputCommitment,
@@ -49,10 +59,8 @@ contract Verifier {
 
         require(address(proofGeneratorAddr) == msg.sender, "proofGeneratorAddr does not match");
 
-        (uint256 stepsNumber, uint256 rows, uint256 cols, uint256 playerCol, uint256 playerRow, bytes memory mapData) =
-            abi.decode(pubInputBytes, (uint256, uint256, uint256, uint256, uint256, bytes));
+        (uint256 tokenId, Map memory map, uint256 stepsNumber) = getMap(pubInputBytes);
 
-        uint256 tokenId = uint256(keccak256(abi.encode(rows, cols, playerCol, playerRow, mapData)));
 
         /*
         check is being done on token erc1155 mint function
@@ -94,7 +102,7 @@ contract Verifier {
         emit MapMinted(
             tokenId,
             msg.sender,
-            Map({rows: rows, cols: cols, playerCol: playerCol, playerRow: playerRow, mapData: mapData}),
+            map,
             stepsNumber
         );
     }
