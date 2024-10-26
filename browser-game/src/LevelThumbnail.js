@@ -11,6 +11,7 @@ export class LevelThumbnail extends Phaser.GameObjects.Sprite {
         scene.add.existing(this);
         this.levelNumber = level;
         this.locked = locked;
+        this.scale = 2
         this.setFrame(locked ? 0 : 1);
     }
 }

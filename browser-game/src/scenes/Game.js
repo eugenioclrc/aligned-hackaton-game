@@ -73,6 +73,14 @@ export class Game extends Scene
             });
         });
 
+        let cam =this.cameras.main
+        cam.setBounds(this.map.x, this.map.y, this.map.widthInPixels * 2, this.map.heightInPixels * 2);
+        const mapWidth = this.map.widthInPixels * 0.5;  // multiply by 0.5 because you're using setScale(0.5)
+        const mapHeight = this.map.heightInPixels * 0.5;
+        cam.centerOn(mapWidth / 2, mapHeight / 2);
+
+        window.c = cam
+
 
         // Player animation
         this.anims.create({
@@ -135,7 +143,6 @@ export class Game extends Scene
         this.player = this.add.sprite(gameData.player_col * 64 + 32, gameData.player_row * 64 + 32, 'player').setScale(0.5);
         this.player.play('idle-down');
 
-
         // Position tracking
         this.player_row = gameData.player_row;
         this.player_col = gameData.player_col;
@@ -188,7 +195,6 @@ export class Game extends Scene
         this.input.keyboard.on('keydown-THREE', event => this.cameras.main.setZoom(.8));
         this.input.keyboard.on('keydown-FOUR', event => this.cameras.main.setZoom(.7));
         this.input.keyboard.on('keydown-FIVE', event => this.cameras.main.setZoom(.6));
-        window.c=this.cameras.main
 
         this.input.keyboard.on('keydown-R', event => {
             if (confirm("Are you sure you want to restart the level?")) {
@@ -210,7 +216,18 @@ export class Game extends Scene
 
         this.text = this.add.text(32, this.cameras.main.height - 280).setScrollFactor(0).setFontSize(32).setColor('#ffffff');
 
+// Add this after creating your layer
+const graphics = this.add.graphics();
+graphics.lineStyle(4, 0x3d5f69, 1); // 4 pixels wide, black color, full opacity
 
+// Calculate the border rectangle based on your map dimensions
+const borderX = layer.x;
+const borderY = layer.y;
+const borderWidth = this.map.widthInPixels * 0.5;  // multiply by 0.5 because of your layer scale
+const borderHeight = this.map.heightInPixels * 0.5;
+
+// Draw the rectangle
+graphics.strokeRect(borderX, borderY, borderWidth, borderHeight);
     }
 
     update () {

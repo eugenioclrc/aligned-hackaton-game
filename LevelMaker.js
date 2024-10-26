@@ -123,14 +123,18 @@ console.log(`\n\n\nRun with;\n./game --map ${JSON.stringify(Level.fromTileArray(
 
 const tilesLab = [
     [Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Empty, Tile.Empty, Tile.Empty],
-    [Tile.Wall, Tile.Empty, Tile.Target, Tile.Wall, Tile.Empty, Tile.Empty, Tile.Empty],
-    [Tile.Wall, Tile.Empty, Tile.Empty, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall],
-    [Tile.Wall, Tile.Target, Tile.Box, Tile.Player, Tile.Empty, Tile.Empty, Tile.Wall],
-    [Tile.Wall, Tile.Empty, Tile.Empty, Tile.Box, Tile.Empty, Tile.Empty, Tile.Wall],
-    [Tile.Wall, Tile.Empty, Tile.Empty, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall],
-    [Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Empty, Tile.Empty, Tile.Empty],
+    [Tile.Wall, Tile.Target, Tile.Empty, Tile.Wall, Tile.Wall, Tile.Empty, Tile.Empty],
+    [Tile.Wall, Tile.Target, Tile.Player, Tile.Empty, Tile.Wall, Tile.Empty, Tile.Empty],
+    [Tile.Wall, Tile.Target, Tile.Empty, Tile.Box, Tile.Wall, Tile.Empty, Tile.Empty],
+    [Tile.Wall, Tile.Wall, Tile.Box, Tile.Empty, Tile.Wall, Tile.Wall, Tile.Wall],
+    [Tile.Empty, Tile.Wall, Tile.Empty, Tile.Box, Tile.Empty, Tile.Empty, Tile.Wall],
+    [Tile.Empty, Tile.Wall, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Empty, Tile.Wall],
+    [Tile.Empty, Tile.Wall, Tile.Empty, Tile.Empty, Tile.Wall, Tile.Wall, Tile.Wall],
+    [Tile.Empty, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Wall, Tile.Empty, Tile.Empty],
+    
+   
 ];
 
 
 console.log(Level.fromTileArray(tilesLab)); // Create a Level from a 2D array of Tiles
-console.log(`\n\n\nRun with;\n./game --map ${JSON.stringify(Level.fromTileArray(tilesLab))}`); // Create a Level from a 2D array of Tiles
+console.log(`\n\n\Use map data;\n${JSON.stringify(Level.fromTileArray(tilesLab))}`); // Create a Level from a 2D array of Tiles

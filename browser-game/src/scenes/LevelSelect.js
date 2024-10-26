@@ -10,7 +10,21 @@ const LEVELS = [
     '{"rows":6,"cols":7,"map":"aaaa002844a222bc0aaaa0","player_row":2,"player_col":1}',
     // https://www.sokobanonline.com/play/web-archive/david-w-skinner/microban/761_microban-1
     '{"rows":7,"cols":7,"map":"aa0238082aad02810a0aaaa000","player_row":3,"player_col":3}',
+    //https://www.sokobanonline.com/play/web-archive/david-w-skinner/microban/763_microban-3
+    '{"rows":6,"cols":9,"map":"0aa02a0aa8004a20928ce0aaaaa0","player_row":4,"player_col":6}',
+    // https://www.sokobanonline.com/play/web-archive/david-w-skinner/microban/765_microban-5
+    '{"rows":7,"cols":9,"map":"2aaa880022370a84428370a0002aaaa8","player_row":3,"player_col":4}',
+    // https://www.sokobanonline.com/play/web-archive/david-w-skinner/microban/766_microban-6
+    '{"rows":6,"cols":12,"map":"aaa2aa802a0285002284bf0280aaaaaa8000","player_row":2,"player_col":10}',
+    // https://www.sokobanonline.com/play/web-archive/david-w-skinner/microban/767_microban-7
+    '{"rows":9,"cols":7,"map":"aaaa0028dca1d28dca1d28dca002aaa8","player_row":7,"player_col":5}',
+    // https://www.sokobanonline.com/play/web-archive/david-w-skinner/microban/769_microban-9
+    '{"rows":7,"cols":6,"map":"aa8b0a852a022820ae02a0","player_row":2,"player_col":1}',
 
+    // https://www.sokobanonline.com/play/web-archive/david-w-skinner/microban/771_microban-11
+    '{"rows":8,"cols":9,"map":"0aaa0200808a2aa2128f84a000282aaaa800","player_row":2,"player_col":6}',
+    // https://www.sokobanonline.com/play/web-archive/david-w-skinner/microban/773_microban-13
+    '{"rows":9,"cols":7,"map":"aa02ca0b082c60a4a8842200882a2a80","player_row":2,"player_col":2}'
 ]
 
 
