@@ -407,7 +407,7 @@ graphics.strokeRect(borderX, borderY, borderWidth, borderHeight);
             l.path = directionsToHex(moves)
             l.length = moves.length;
 
-            let command = `./prove/target/release/sokoban --data '${JSON.stringify(l)}' --keystore-path ~/.foundry/keystores/keystore0`;
+            let command = `./prove/target/release/zokoban --data '${JSON.stringify(l)}' --keystore-path ~/.foundry/keystores/keystore0`;
             window.prompt("You win! submit with", command);
             console.log(command);
 

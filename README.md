@@ -1,8 +1,8 @@
-# aligned-hackaton-game
+# Zokoban aligned-hackaton-game
 
 This is a game in which you feature a worker in align that needs to move the proof boxes to the storage locations. The worker can push boxes but can't pull them. The worker can only push one box at a time and can't push boxes into walls or other boxes.
 
-# ZK Sokoban - Table of Contents
+# Zokoban - Table of Contents
 
 1. [Introduction](#aligned-hackaton-game)
    - [Project Overview](#aligned-hackaton-game)
@@ -123,7 +123,7 @@ After you win the game you will see get a command to prove the game and submit y
 ## Prove the game
 This will build the run the game using your path to prove the game and build the proves. Example;
 ```bash
-./prove/target/release/sokoban --data '{"rows":6,"cols":7,"map":"aaaa002844a222bc0aaaa0","player_row":2,"player_col":1,"path":"3FD89894F4F5A","length":26}' --keystore-path ~/.foundry/keystores/keystore0
+./prove/target/release/zokoban --data '{"rows":6,"cols":7,"map":"aaaa002844a222bc0aaaa0","player_row":2,"player_col":1,"path":"3FD89894F4F5A","length":26}' --keystore-path ~/.foundry/keystores/keystore0
 ```
 
 ## Project structure
