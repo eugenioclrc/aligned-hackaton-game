@@ -87,7 +87,7 @@ struct Args {
     #[arg(
         short,
         long,
-        default_value = "0x433cDcF08F8AD1652cdEA5B719D98F365b14355c"
+        default_value = "0x37E84746A4631f80d279bcB410dd320f57C1B842"
     )]
     verifier_contract_address: H160,
 }

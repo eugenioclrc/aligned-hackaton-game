@@ -57,6 +57,8 @@ contract Verifier {
             revert InvalidElf(provingSystemAuxDataCommitment);
         }
 
+        require(keccak256(pubInputBytes) == pubInputCommitment, "pubInputCommitment does not match");
+
         require(address(proofGeneratorAddr) == msg.sender, "proofGeneratorAddr does not match");
 
         (uint256 tokenId, Map memory map, uint256 stepsNumber) = getMap(pubInputBytes);
